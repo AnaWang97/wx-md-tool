@@ -219,27 +219,108 @@ function applyCustomStyles(
     return result;
   };
 
+  // 智能替换颜色：保留白色文字，替换其他颜色
+  const smartReplaceColors = (style: string) => {
+    // 替换 background 和 border 中的颜色
+    let result = style;
+
+    // 替换 linear-gradient 中的颜色（但保留 transparent）
+    result = result.replace(/linear-gradient\([^)]+\)/g, (match) => {
+      return match.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, (color) => {
+        return primaryColor;
+      });
+    });
+
+    // 替换 background: #xxx（非白色/浅色背景）
+    result = result.replace(/background:\s*(#[0-9a-fA-F]{3,6})/g, (match, color) => {
+      const hex = color.slice(1);
+      const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16);
+      const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16);
+      const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      // 深色背景替换为主题色，浅色背景替换为主题色的浅色版本
+      if (brightness < 200) {
+        return `background: ${primaryColor}`;
+      } else {
+        return `background: ${lightenColor(primaryColor, 0.1)}`;
+      }
+    });
+
+    // 替换 border 中的颜色（非白色/浅灰色）
+    result = result.replace(/border[^:]*:\s*([^;]*)/g, (match) => {
+      return match.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, (color) => {
+        const hex = color.slice(1);
+        const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16);
+        const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16);
+        const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        // 只替换非浅色边框
+        if (brightness < 230) {
+          return primaryColor;
+        }
+        return color;
+      });
+    });
+
+    // 替换 color: #xxx（非白色文字，用于标题文字颜色）
+    result = result.replace(/([^-])color:\s*(#[0-9a-fA-F]{3,6})/g, (match, prefix, color) => {
+      const hex = color.slice(1);
+      const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16);
+      const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16);
+      const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      // 白色/浅色文字保持不变，深色文字替换为主题色
+      if (brightness > 240) {
+        return match; // 保持白色文字
+      }
+      return `${prefix}color: ${primaryColor}`;
+    });
+
+    return result;
+  };
+
+  // 引用块特殊处理：只替换背景和边框，保留文字颜色
+  const replaceBlockquoteColors = (style: string) => {
+    let result = style;
+    // 替换 linear-gradient 中的颜色
+    result = result.replace(/linear-gradient\([^)]+\)/g, (match) => {
+      return match.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, () => {
+        return lightenColor(primaryColor, 0.15);
+      });
+    });
+    // 替换 background: #xxx
+    result = result.replace(/background:\s*(#[0-9a-fA-F]{3,6})/g, () => {
+      return `background: ${lightenColor(primaryColor, 0.1)}`;
+    });
+    // 替换 border 中的颜色
+    result = result.replace(/border[^:]*:\s*([^;]*)/g, (match) => {
+      return match.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, () => primaryColor);
+    });
+    // 不替换 color 属性，保持文字可读
+    return result;
+  };
+
   // 替换标题样式
-  // 只有 colorFollowable 的主题才替换背景色，其他主题只替换边框色
   if (colorFollowable) {
-    styles.h1 = replaceBackgroundColor(replaceBorderColor(styles.h1));
-    styles.h2 = replaceBackgroundColor(replaceBorderColor(styles.h2));
-    styles.h3 = replaceBackgroundColor(replaceBorderColor(styles.h3));
+    styles.h1 = smartReplaceColors(styles.h1);
+    styles.h2 = smartReplaceColors(styles.h2);
+    styles.h3 = smartReplaceColors(styles.h3);
+    styles.h4 = smartReplaceColors(styles.h4);
+    styles.hr = smartReplaceColors(styles.hr);
+    styles.blockquote = replaceBlockquoteColors(styles.blockquote);
   } else {
     styles.h1 = replaceBorderColor(styles.h1);
     styles.h2 = replaceBorderColor(styles.h2);
     styles.h3 = replaceBorderColor(styles.h3);
+    styles.h4 = replaceBorderColor(styles.h4);
+    styles.blockquote = styles.blockquote.replace(/border[^:]*:\s*[^;]*#[0-9a-fA-F]+[^;]*/g, (match) =>
+      match.replace(colorRegex, primaryColor)
+    );
   }
-  styles.h4 = replaceBorderColor(styles.h4);
 
   // 强调和链接使用主题色
   styles.strong = styles.strong.replace(/color:\s*[^;]+;/, `color: ${primaryColor};`);
   styles.a = styles.a.replace(/color:\s*[^;]+;/, `color: ${primaryColor};`);
-
-  // 替换引用块边框颜色
-  styles.blockquote = styles.blockquote.replace(/border[^:]*:\s*[^;]*#[0-9a-fA-F]+[^;]*/g, (match) =>
-    match.replace(colorRegex, primaryColor)
-  );
 
   return styles;
 }

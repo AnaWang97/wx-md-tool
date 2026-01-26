@@ -1,36 +1,302 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WX MD Tool 使用说明书
 
-## Getting Started
+> 一款专为微信公众号打造的 Markdown 排版工具，让你的文章更加精美！
 
-First, run the development server:
+**在线体验**：[https://wx-md-tool.vercel.app](https://wx-md-tool.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 目录
+
+- [快速开始](#快速开始)
+- [编辑功能](#编辑功能)
+- [主题与样式](#主题与样式)
+- [预览功能](#预览功能)
+- [文件操作](#文件操作)
+- [快捷键](#快捷键)
+- [Markdown 语法支持](#markdown-语法支持)
+- [常见问题](#常见问题)
+
+---
+
+## 快速开始
+
+1. 打开工具，在左侧编辑区输入 Markdown 内容
+2. 右侧实时预览排版效果
+3. 选择喜欢的主题样式
+4. 点击「复制内容」按钮
+5. 粘贴到微信公众号编辑器即可
+
+---
+
+## 编辑功能
+
+### 编辑器工具栏
+
+工具栏提供常用的格式化按钮：
+
+| 按钮 | 功能 | 对应语法 |
+|------|------|----------|
+| H1/H2/H3 | 标题 | `# ` `## ` `### ` |
+| B | 加粗 | `**文字**` |
+| I | 斜体 | `*文字*` |
+| S | 删除线 | `~~文字~~` |
+| 引用 | 引用块 | `> ` |
+| 代码 | 代码块 | \`\`\`code\`\`\` |
+| 链接 | 超链接 | `[文字](url)` |
+| 图片 | 图片 | `![alt](url)` |
+| 列表 | 无序列表 | `- ` |
+| 数字列表 | 有序列表 | `1. ` |
+| 分割线 | 水平线 | `---` |
+| 表格 | 表格 | `\| \| \|` |
+
+### 智能粘贴
+
+支持从飞书等富文本编辑器直接粘贴，自动转换为 Markdown 格式。
+
+### 自动保存
+
+- 内容每隔 1 秒自动保存到浏览器本地存储
+- 刷新页面后自动恢复上次编辑的内容
+- 主题选择也会自动保存
+- 底部状态栏显示保存状态
+
+---
+
+## 主题与样式
+
+### 主题分类
+
+工具提供 **27+ 精美主题**，分为以下类别：
+
+| 类别 | 主题数量 | 特点 |
+|------|----------|------|
+| 经典系列 | 5 个 | 微信绿、商务蓝、经典红等 |
+| 现代系列 | 5 个 | 简约大气的现代风格 |
+| 创意系列 | 4 个 | 独特有趣的创意设计 |
+| 极简系列 | 3 个 | 干净清爽的极简风格 |
+| 暗色系列 | 2 个 | 深色背景主题 |
+| 行业系列 | 6 个 | 科技、金融、医疗、教育等 |
+| 胶囊标题 | 3 个 | 读书笔记、知识卡片等 |
+
+### 自定义样式
+
+点击「自定义」按钮启用，然后点击「调整」面板：
+
+- **主题色**：10 种预设色 + 自定义取色器
+- **正文字号**：14px - 20px
+- **标题字号**：18px - 28px
+- **行高**：1.5 - 2.5（紧凑到宽松）
+- **段落首行缩进**：开启/关闭
+- **代码高亮主题**：4 种可选
+  - GitHub Dark
+  - GitHub Light
+  - Monokai
+  - Dracula
+
+### 颜色跟随主题
+
+部分主题（读书笔记、知识卡片、成长日记）支持颜色跟随，切换主题色后标题背景色会自动变化。
+
+---
+
+## 预览功能
+
+### 实时预览
+
+右侧预览区实时显示排版效果，与左侧编辑器滚动同步。
+
+### 手机预览模式
+
+点击预览区右上角「桌面/手机」按钮切换：
+
+- **桌面模式**：标准宽度预览
+- **手机模式**：模拟 iPhone 屏幕（375px 宽度），带手机边框效果
+
+> 建议发布前用手机模式检查，因为大部分用户在手机上阅读公众号文章。
+
+### 复制内容
+
+点击顶部「复制内容」按钮，将渲染后的 HTML 复制到剪贴板，然后直接粘贴到微信公众号编辑器。
+
+---
+
+## 文件操作
+
+点击编辑区「文件」按钮：
+
+### 导入 Markdown
+
+- 支持 `.md`、`.markdown`、`.txt` 格式
+- 导入后自动替换编辑器内容
+
+### 导出 .md
+
+- 将当前 Markdown 内容导出为 `.md` 文件
+- 文件名格式：`article-YYYY-MM-DD.md`
+
+### 导出 .html
+
+- 将渲染后的 HTML 导出为完整网页文件
+- 包含基本样式，可直接在浏览器中打开
+
+---
+
+## 快捷键
+
+编辑器支持以下快捷键（Mac 使用 `Cmd`，Windows 使用 `Ctrl`）：
+
+| 快捷键 | 功能 |
+|--------|------|
+| `Ctrl/Cmd + B` | 加粗 |
+| `Ctrl/Cmd + I` | 斜体 |
+| `Ctrl/Cmd + K` | 插入链接 |
+| `Ctrl/Cmd + D` | 删除线 |
+| `Ctrl/Cmd + E` | 行内代码 |
+| `Ctrl/Cmd + H` | 高亮文本 |
+
+---
+
+## Markdown 语法支持
+
+### 基础语法
+
+```markdown
+# 一级标题
+## 二级标题
+### 三级标题
+
+**加粗文本**
+*斜体文本*
+~~删除线~~
+`行内代码`
+
+> 引用块
+
+- 无序列表项
+- 无序列表项
+
+1. 有序列表项
+2. 有序列表项
+
+[链接文字](https://example.com)
+![图片描述](https://example.com/image.jpg)
+
+---
+
+| 表头1 | 表头2 |
+|-------|-------|
+| 内容1 | 内容2 |
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 扩展语法
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+#### 高亮文本
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+使用 `==文字==` 语法创建高亮效果：
 
-## Learn More
+```markdown
+这是==高亮文本==示例
+```
 
-To learn more about Next.js, take a look at the following resources:
+#### 脚注
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```markdown
+这是一段需要注释的文字[^1]。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+[^1]: 这是脚注内容
+```
 
-## Deploy on Vercel
+脚注会在文章底部统一显示为「参考注释」。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### 代码块
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+支持语法高亮的代码块：
+
+````markdown
+```javascript
+const greeting = "Hello World";
+console.log(greeting);
+```
+````
+
+支持的语言：JavaScript、TypeScript、Python、Java、Go、Rust、HTML、CSS、SQL 等。
+
+### 列表智能识别
+
+工具会自动处理以下列表格式：
+
+```markdown
+冒号后直接跟列表：
+- 列表项1
+- 列表项2
+
+中文顿号列表会自动转换：
+1、第一项
+2、第二项
+```
+
+---
+
+## 常见问题
+
+### Q: 为什么加粗/列表没有正确显示？
+
+A: 确保语法格式正确：
+- 加粗：`**` 和文字之间不要有空格
+- 列表：列表标记（`-` 或 `1.`）后需要有空格
+- 列表前最好有一个空行
+
+### Q: 复制后粘贴到公众号样式丢失？
+
+A: 请使用「复制内容」按钮复制，不要直接从预览区选择复制。
+
+### Q: 图片无法显示？
+
+A: 微信公众号不支持外链图片，需要：
+1. 先将图片上传到公众号素材库
+2. 使用公众号提供的图片链接
+3. 或者在公众号编辑器中单独添加图片
+
+### Q: 代码块在公众号显示异常？
+
+A: 微信公众号对代码块支持有限，建议：
+- 使用深色代码主题（如 GitHub Dark）
+- 代码不要太长，避免横向滚动
+
+### Q: 内容丢失了怎么办？
+
+A: 工具会自动保存到浏览器本地存储，但以下情况可能导致丢失：
+- 清除浏览器缓存
+- 使用隐私模式浏览
+- 换了浏览器或设备
+
+建议重要内容及时使用「导出 .md」功能备份。
+
+---
+
+## 本地开发
+
+```bash
+# 安装依赖
+pnpm install
+
+# 启动开发服务器
+pnpm dev
+
+# 构建生产版本
+pnpm build
+```
+
+---
+
+## 技术支持
+
+如有问题或建议，欢迎通过以下方式联系：
+
+- 点击工具右上角「联系」按钮
+- GitHub Issues: [https://github.com/AnaWang97/wx-md-tool/issues](https://github.com/AnaWang97/wx-md-tool/issues)
+
+---
+
+**WX MD Tool** - 让公众号排版更简单！

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { CodeTheme, codeThemes } from "@/lib/markdown";
 
 export interface CustomStyles {
@@ -22,6 +23,23 @@ export default function CustomStylePanel({
   onStylesChange,
 }: CustomStylePanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [panelPosition, setPanelPosition] = useState({ top: 0, right: 0 });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPanelPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+      });
+    }
+  }, [isOpen]);
 
   const presetColors = [
     "#07C160", // 微信绿
@@ -40,6 +58,7 @@ export default function CustomStylePanel({
     <div className="relative">
       {/* 自定义按钮 */}
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-1.5 bg-pink-50 hover:bg-pink-100 border border-pink-200 rounded-full transition-all hover-wiggle"
       >
@@ -49,15 +68,18 @@ export default function CustomStylePanel({
         <span className="text-sm text-purple-600">调整</span>
       </button>
 
-      {/* 下拉面板 */}
-      {isOpen && (
+      {/* 下拉面板 - 使用 Portal 渲染到 body，避开 header 的 stacking context */}
+      {isOpen && mounted && createPortal(
         <>
           <div
-            className="fixed inset-0 z-[100] bg-black/20"
+            className="fixed inset-0 z-[9998]"
             onClick={() => setIsOpen(false)}
           />
 
-          <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border-2 border-pink-100 z-[101] p-4">
+          <div
+            className="fixed w-72 bg-white rounded-2xl shadow-2xl border-2 border-pink-100 z-[9999] p-4"
+            style={{ top: panelPosition.top, right: panelPosition.right }}
+          >
             <h3 className="text-sm font-medium text-purple-600 mb-4 flex items-center gap-1">
               <span>🎨</span>
               样式调整
@@ -185,7 +207,8 @@ export default function CustomStylePanel({
               </div>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );

@@ -8,6 +8,7 @@ import CopyButton from "@/components/CopyButton";
 import CustomStylePanel, { CustomStyles } from "@/components/CustomStylePanel";
 import ContactModal from "@/components/ContactModal";
 import LandingPage from "@/components/LandingPage";
+import ImportExport from "@/components/ImportExport";
 import { themes, Theme } from "@/lib/themes";
 import { parseMarkdown } from "@/lib/markdown";
 
@@ -20,14 +21,25 @@ const defaultMarkdown = `# 欢迎使用 WX MD Tool
 
 ## 主要特性
 
-- 12+ 精美主题，涵盖经典、现代、创意、极简、暗色等风格
-- 支持自定义主题色、字号、行高
+- 24+ 精美主题，涵盖经典、现代、创意、极简、暗色、==行业==等风格
+- 支持自定义主题色、字号、行高、==代码高亮主题==
+- 支持==高亮文本==和脚注[^1]功能
 - 实时预览，所见即所得
 - 一键复制，直接粘贴到公众号后台
 
+## 新增功能演示
+
+### 高亮文本
+
+使用 \`==文字==\` 语法可以创建==高亮效果==，非常适合强调==重点内容==。
+
+### 脚注功能
+
+脚注是学术写作的重要工具[^2]，可以为文章添加参考注释[^3]。
+
 ## 代码展示
 
-支持多种编程语言的语法高亮：
+支持多种编程语言的语法高亮，可在「调整」面板切换代码主题：
 
 \`\`\`javascript
 // JavaScript 示例
@@ -37,16 +49,6 @@ const greet = (name) => {
 };
 
 greet('微信公众号');
-\`\`\`
-
-\`\`\`python
-# Python 示例
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n-1) + fibonacci(n-2)
-
-print([fibonacci(i) for i in range(10)])
 \`\`\`
 
 ## 引用样式
@@ -72,14 +74,18 @@ print([fibonacci(i) for i in range(10)])
 
 | 功能 | 说明 | 状态 |
 |------|------|------|
-| Markdown 转换 | 将 Markdown 转换为富文本 | 已完成 |
-| 主题切换 | 12+ 精美主题 | 已完成 |
-| 自定义样式 | 颜色、字号、行高 | 已完成 |
-| 一键复制 | 复制到剪贴板 | 已完成 |
+| 高亮文本 | ==重点内容== 标记 | 新增 |
+| 脚注 | 参考注释功能 | 新增 |
+| 代码主题 | 4种高亮风格 | 新增 |
+| 行业主题 | 6个专业主题 | 新增 |
 
 ---
 
 开始创作你的精美文章吧！
+
+[^1]: 脚注会在文章底部统一显示
+[^2]: 脚注常用于学术论文、深度分析文章
+[^3]: 点击脚注编号可以在引用和注释之间跳转
 `;
 
 const defaultCustomStyles: CustomStyles = {
@@ -88,6 +94,7 @@ const defaultCustomStyles: CustomStyles = {
   titleFontSize: 22,
   lineHeight: 1.75,
   paragraphIndent: false,
+  codeTheme: "github-dark",
 };
 
 export default function Home() {
@@ -98,16 +105,62 @@ export default function Home() {
   const [customStyles, setCustomStyles] = useState<CustomStyles>(defaultCustomStyles);
   const [useCustomStyles, setUseCustomStyles] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "">("");
   const previewRef = useRef<HTMLDivElement>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 检查用户是否已经访问过
+  // 检查用户是否已经访问过 & 加载保存的内容
   useEffect(() => {
     const hasVisited = localStorage.getItem("wx-md-tool-visited");
     if (hasVisited) {
       setShowLanding(false);
     }
+    // 加载保存的内容
+    const savedContent = localStorage.getItem("wx-md-tool-content");
+    if (savedContent) {
+      setMarkdown(savedContent);
+    }
+    // 加载保存的主题
+    const savedThemeId = localStorage.getItem("wx-md-tool-theme");
+    if (savedThemeId) {
+      const savedTheme = themes.find(t => t.id === savedThemeId);
+      if (savedTheme) {
+        setTheme(savedTheme);
+      }
+    }
     setIsLoaded(true);
   }, []);
+
+  // 自动保存内容（防抖）
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    setSaveStatus("saving");
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    saveTimeoutRef.current = setTimeout(() => {
+      localStorage.setItem("wx-md-tool-content", markdown);
+      setSaveStatus("saved");
+      // 2秒后隐藏保存状态
+      setTimeout(() => setSaveStatus(""), 2000);
+    }, 1000);
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [markdown, isLoaded]);
+
+  // 保存主题选择
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("wx-md-tool-theme", theme.id);
+    }
+  }, [theme, isLoaded]);
 
   const handleStart = () => {
     localStorage.setItem("wx-md-tool-visited", "true");
@@ -149,7 +202,8 @@ export default function Home() {
     return parseMarkdown(
       markdown,
       theme,
-      useCustomStyles ? customStyles : undefined
+      useCustomStyles ? customStyles : undefined,
+      customStyles.codeTheme // 代码主题始终传递，独立于自定义开关
     );
   }, [markdown, theme, customStyles, useCustomStyles]);
 
@@ -191,7 +245,7 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
       {/* 顶部工具栏 */}
-      <header className="flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-sm border-b-2 border-pink-100 shadow-sm">
+      <header className="flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-sm border-b-2 border-pink-100 shadow-sm relative z-[102]">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowLanding(true)}
@@ -254,7 +308,7 @@ export default function Home() {
       </header>
 
       {/* 主体内容区 */}
-      <main className="flex-1 flex overflow-hidden">
+      <main className="flex-1 flex overflow-hidden relative z-0">
         {/* 左侧编辑器 */}
         <div className="w-1/2 border-r-2 border-pink-100">
           <Editor
@@ -263,6 +317,13 @@ export default function Home() {
             onScroll={handleEditorScroll}
             scrollRatio={scrollRatio}
             isScrollSource={scrollSource === "editor"}
+            renderFileButton={() => (
+              <ImportExport
+                markdown={markdown}
+                html={html}
+                onImport={setMarkdown}
+              />
+            )}
           />
         </div>
 
@@ -292,6 +353,11 @@ export default function Home() {
                 style={{ backgroundColor: customStyles.primaryColor }}
               />
               自定义色
+            </span>
+          )}
+          {saveStatus && (
+            <span className={`flex items-center gap-1 transition-opacity ${saveStatus === "saved" ? "text-green-500" : "text-purple-400"}`}>
+              {saveStatus === "saving" ? "💾 保存中..." : "✓ 已自动保存"}
             </span>
           )}
         </div>

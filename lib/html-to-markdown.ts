@@ -87,9 +87,15 @@ export function htmlToMarkdown(html: string): ConvertResult {
         }
         return children;
 
-      // 图片 - 跳过图片，因为飞书图片无法直接在微信使用
+      // 图片 - 提取图片 URL
       case "img":
+        const src = element.getAttribute("src") || "";
+        const alt = element.getAttribute("alt") || "";
         imageIndex++;
+
+        if (src && (src.startsWith("http://") || src.startsWith("https://"))) {
+          return `\n![${alt || `图片${imageIndex}`}](${src})\n\n`;
+        }
         return `\n[图片${imageIndex}]\n\n`;
 
       // 列表

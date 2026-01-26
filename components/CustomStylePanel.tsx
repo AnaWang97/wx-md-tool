@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CodeTheme, codeThemes } from "@/lib/markdown";
 
 export interface CustomStyles {
   primaryColor: string;
@@ -8,6 +9,7 @@ export interface CustomStyles {
   titleFontSize: number;
   lineHeight: number;
   paragraphIndent: boolean;
+  codeTheme: CodeTheme;
 }
 
 interface CustomStylePanelProps {
@@ -51,11 +53,11 @@ export default function CustomStylePanel({
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-[100] bg-black/20"
             onClick={() => setIsOpen(false)}
           />
 
-          <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border-2 border-pink-100 z-50 p-4">
+          <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-2xl border-2 border-pink-100 z-[101] p-4">
             <h3 className="text-sm font-medium text-purple-600 mb-4 flex items-center gap-1">
               <span>🎨</span>
               样式调整
@@ -147,7 +149,7 @@ export default function CustomStylePanel({
             </div>
 
             {/* 段落首行缩进 */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <label className="text-xs text-purple-400">段落首行缩进</label>
               <button
                 onClick={() => onStylesChange({ ...styles, paragraphIndent: !styles.paragraphIndent })}
@@ -161,6 +163,26 @@ export default function CustomStylePanel({
                   }`}
                 />
               </button>
+            </div>
+
+            {/* 代码高亮主题 */}
+            <div>
+              <label className="text-xs text-purple-400 block mb-2">代码高亮主题</label>
+              <div className="grid grid-cols-2 gap-2">
+                {(Object.keys(codeThemes) as CodeTheme[]).map((themeKey) => (
+                  <button
+                    key={themeKey}
+                    onClick={() => onStylesChange({ ...styles, codeTheme: themeKey })}
+                    className={`px-3 py-2 text-xs rounded-lg transition-all ${
+                      styles.codeTheme === themeKey
+                        ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {codeThemes[themeKey].name}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </>

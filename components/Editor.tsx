@@ -14,6 +14,7 @@ interface EditorProps {
   onScroll?: (scrollRatio: number) => void;
   scrollRatio?: number;
   isScrollSource?: boolean;
+  renderFileButton?: () => React.ReactNode;
 }
 
 export default function Editor({
@@ -22,6 +23,7 @@ export default function Editor({
   onScroll,
   scrollRatio,
   isScrollSource,
+  renderFileButton,
 }: EditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isInternalScroll = useRef(false);
@@ -36,7 +38,7 @@ export default function Editor({
         const html = getHtmlFromClipboard(clipboardData);
 
         // 检查是否是有意义的 HTML（不只是纯文本的 HTML 包装）
-        if (html && html.includes("<") && (html.includes("<p") || html.includes("<div") || html.includes("<h") || html.includes("<strong") || html.includes("<em") || html.includes("<ul") || html.includes("<ol"))) {
+        if (html && html.includes("<") && (html.includes("<p") || html.includes("<div") || html.includes("<h") || html.includes("<strong") || html.includes("<em") || html.includes("<ul") || html.includes("<ol") || html.includes("<img"))) {
           e.preventDefault();
 
           const { markdown } = htmlToMarkdown(html);
@@ -163,6 +165,44 @@ export default function Editor({
     [value, onChange]
   );
 
+  // 快捷键处理
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      const modKey = isMac ? e.metaKey : e.ctrlKey;
+
+      if (modKey) {
+        switch (e.key.toLowerCase()) {
+          case 'b': // 加粗
+            e.preventDefault();
+            handleWrap('**', '**', '粗体文本');
+            break;
+          case 'i': // 斜体
+            e.preventDefault();
+            handleWrap('*', '*', '斜体文本');
+            break;
+          case 'k': // 链接
+            e.preventDefault();
+            handleWrap('[', '](url)', '链接文本');
+            break;
+          case 'd': // 删除线
+            e.preventDefault();
+            handleWrap('~~', '~~', '删除文本');
+            break;
+          case 'e': // 行内代码
+            e.preventDefault();
+            handleWrap('`', '`', 'code');
+            break;
+          case 'h': // 高亮
+            e.preventDefault();
+            handleWrap('==', '==', '高亮文本');
+            break;
+        }
+      }
+    },
+    [handleWrap]
+  );
+
   return (
     <div className="h-full flex flex-col bg-white/60">
       <div className="flex items-center justify-between px-4 py-2 border-b border-pink-100 bg-white/80">
@@ -174,6 +214,7 @@ export default function Editor({
           <span className="text-xs text-pink-400 hidden sm:inline">
             支持从飞书粘贴
           </span>
+          {renderFileButton && renderFileButton()}
         </div>
         <span className="text-xs text-purple-300 bg-purple-50 px-2 py-0.5 rounded-full">{value.length} 字符</span>
       </div>
@@ -184,7 +225,8 @@ export default function Editor({
         onChange={(e) => onChange(e.target.value)}
         onPaste={handlePaste}
         onScroll={handleScroll}
-        className="flex-1 w-full p-4 bg-transparent text-purple-900 font-mono text-sm resize-none focus:outline-none placeholder:text-purple-300"
+        onKeyDown={handleKeyDown}
+        className="flex-1 w-full p-4 bg-transparent text-purple-900 font-mono text-base leading-relaxed resize-none focus:outline-none placeholder:text-purple-300"
         placeholder="在此输入 Markdown 内容，或直接从飞书粘贴..."
         spellCheck={false}
       />

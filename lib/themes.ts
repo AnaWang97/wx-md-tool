@@ -1,8 +1,10 @@
 export interface Theme {
   name: string;
   id: string;
-  category: "classic" | "modern" | "creative" | "minimal" | "dark";
+  category: "classic" | "modern" | "creative" | "minimal" | "dark" | "industry";
   preview: string;
+  // 是否支持自定义颜色跟随（标题背景色会随主题色变化）
+  colorFollowable?: boolean;
   styles: {
     container: string;
     h1: string;
@@ -50,9 +52,9 @@ export const themes: Theme[] = [
         "margin: 20px 0; padding: 15px 20px; background: linear-gradient(to right, #f0faf5, #fff); border-left: 4px solid #07C160; border-radius: 0 8px 8px 0; color: #666; font-size: 15px;",
       code: "background: #e7f7ef; color: #07C160; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace; font-size: 14px; margin: 0 2px;",
       pre: "background: linear-gradient(145deg, #1a1a2e, #16213e); color: #eee; padding: 20px; border-radius: 10px; overflow-x: auto; margin: 20px 0; font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.7; box-shadow: 0 4px 15px rgba(0,0,0,0.1);",
-      ul: "margin: 16px 0; padding-left: 0; list-style: none;",
-      ol: "margin: 16px 0; padding-left: 25px; list-style-type: decimal;",
-      li: "margin: 10px 0; padding-left: 25px; position: relative;",
+      ul: "margin: 16px 0; padding-left: 10px; list-style: none;",
+      ol: "margin: 16px 0; padding-left: 10px; list-style: none;",
+      li: "margin: 10px 0; display: flex; align-items: flex-start; line-height: 1.8;",
       img: "max-width: 100%; border-radius: 10px; margin: 25px auto; display: block; box-shadow: 0 4px 20px rgba(7, 193, 96, 0.15);",
       hr: "border: none; height: 1px; background: linear-gradient(to right, transparent, #07C160, transparent); margin: 35px 0;",
       table: "width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; border-radius: 8px; overflow: hidden;",
@@ -597,6 +599,290 @@ export const themes: Theme[] = [
       td: "border: 1px solid #e2e8f0; padding: 10px 12px;",
     },
   },
+
+  // ========== 行业系列 ==========
+  // 样式19: 科技互联网
+  {
+    name: "科技互联网",
+    id: "tech-internet",
+    category: "industry",
+    preview: "#6366f1",
+    styles: {
+      container:
+        "font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif; font-size: 16px; color: #334155; line-height: 1.8; padding: 20px;",
+      h1: "font-size: 24px; font-weight: 700; color: #fff; margin: 30px 0 25px; padding: 18px 25px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);",
+      h2: "font-size: 18px; font-weight: 600; color: #6366f1; margin: 28px 0 18px; padding: 12px 20px; background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent); border-left: 4px solid #6366f1; border-radius: 0 8px 8px 0;",
+      h3: "font-size: 16px; font-weight: 600; color: #6366f1; margin: 22px 0 12px; padding: 8px 15px; background: #eef2ff; border-radius: 6px; display: inline-block;",
+      h4: "font-size: 15px; font-weight: 600; color: #6366f1; margin: 18px 0 10px;",
+      p: "margin: 16px 0; text-align: justify;",
+      strong: "font-weight: 600; color: #6366f1;",
+      em: "font-style: italic; color: #64748b;",
+      a: "color: #6366f1; text-decoration: none;",
+      blockquote:
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #eef2ff, #faf5ff); border-left: 4px solid #6366f1; border-radius: 0 12px 12px 0; color: #475569;",
+      code: "background: #eef2ff; color: #6366f1; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: linear-gradient(145deg, #1e1b4b, #312e81); color: #e0e7ff; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 16px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 10px 0;",
+      img: "max-width: 100%; border-radius: 12px; margin: 25px auto; display: block; box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);",
+      hr: "border: none; height: 2px; background: linear-gradient(to right, transparent, #6366f1, transparent); margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px; border-radius: 12px; overflow: hidden;",
+      th: "background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #e5e7eb; padding: 12px; background: #fafafa;",
+    },
+  },
+  // 样式20: 金融商务
+  {
+    name: "金融商务",
+    id: "finance-business",
+    category: "industry",
+    preview: "#0f4c81",
+    styles: {
+      container:
+        "font-family: 'Georgia', 'PingFang SC', 'Microsoft YaHei', serif; font-size: 16px; color: #1e293b; line-height: 1.85; padding: 20px;",
+      h1: "font-size: 24px; font-weight: 700; color: #0f4c81; text-align: center; margin: 30px 0 25px; padding: 20px 30px; border: 2px solid #0f4c81; position: relative;",
+      h2: "font-size: 18px; font-weight: 600; color: #0f4c81; margin: 28px 0 18px; padding: 12px 20px; background: #f0f7ff; border-left: 5px solid #0f4c81;",
+      h3: "font-size: 16px; font-weight: 600; color: #0f4c81; margin: 22px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #0f4c81;",
+      h4: "font-size: 15px; font-weight: 600; color: #0f4c81; margin: 18px 0 10px;",
+      p: "margin: 16px 0; text-align: justify;",
+      strong: "font-weight: 600; color: #0f4c81;",
+      em: "font-style: italic; color: #64748b;",
+      a: "color: #0f4c81; text-decoration: none; border-bottom: 1px solid #0f4c81;",
+      blockquote:
+        "margin: 22px 0; padding: 18px 22px; background: #f8fafc; border-left: 4px solid #0f4c81; color: #475569; font-style: italic;",
+      code: "background: #f0f7ff; color: #0f4c81; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: #0f172a; color: #94a3b8; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 16px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 10px 0;",
+      img: "max-width: 100%; border-radius: 4px; margin: 25px auto; display: block; border: 1px solid #e2e8f0;",
+      hr: "border: none; height: 1px; background: #0f4c81; margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px;",
+      th: "background: #0f4c81; color: white; padding: 14px; text-align: left; font-weight: 600;",
+      td: "border: 1px solid #cbd5e1; padding: 12px;",
+    },
+  },
+  // 样式21: 医疗健康
+  {
+    name: "医疗健康",
+    id: "medical-health",
+    category: "industry",
+    preview: "#10b981",
+    styles: {
+      container:
+        "font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: 16px; color: #334155; line-height: 1.85; padding: 20px;",
+      h1: "font-size: 24px; font-weight: 700; color: #fff; margin: 30px 0 25px; padding: 18px 25px; background: linear-gradient(135deg, #10b981 0%, #34d399 100%); border-radius: 12px; text-align: center;",
+      h2: "font-size: 18px; font-weight: 600; color: #059669; margin: 28px 0 18px; padding: 12px 20px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 0 8px 8px 0;",
+      h3: "font-size: 16px; font-weight: 600; color: #059669; margin: 22px 0 12px; padding: 8px 15px; background: #ecfdf5; border-radius: 20px; display: inline-block;",
+      h4: "font-size: 15px; font-weight: 600; color: #10b981; margin: 18px 0 10px;",
+      p: "margin: 16px 0; text-align: justify;",
+      strong: "font-weight: 600; color: #059669;",
+      em: "font-style: italic; color: #64748b;",
+      a: "color: #10b981; text-decoration: none;",
+      blockquote:
+        "margin: 22px 0; padding: 18px 22px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 0 8px 8px 0; color: #475569;",
+      code: "background: #ecfdf5; color: #059669; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: #064e3b; color: #a7f3d0; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 16px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 10px 0;",
+      img: "max-width: 100%; border-radius: 12px; margin: 25px auto; display: block;",
+      hr: "border: none; height: 2px; background: linear-gradient(to right, transparent, #10b981, transparent); margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px; border-radius: 12px; overflow: hidden;",
+      th: "background: #10b981; color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #d1fae5; padding: 12px; background: #f0fdf4;",
+    },
+  },
+  // 样式22: 教育学术
+  {
+    name: "教育学术",
+    id: "education-academic",
+    category: "industry",
+    preview: "#f59e0b",
+    styles: {
+      container:
+        "font-family: 'Georgia', 'PingFang SC', 'Microsoft YaHei', serif; font-size: 16px; color: #292524; line-height: 1.9; padding: 20px;",
+      h1: "font-size: 26px; font-weight: 700; color: #92400e; text-align: center; margin: 30px 0 25px; padding: 15px 20px; border-bottom: 3px double #f59e0b;",
+      h2: "font-size: 18px; font-weight: 600; color: #92400e; margin: 28px 0 18px; padding: 10px 15px; background: #fffbeb; border-left: 4px solid #f59e0b;",
+      h3: "font-size: 16px; font-weight: 600; color: #b45309; margin: 22px 0 12px; padding-left: 15px; border-left: 3px solid #f59e0b;",
+      h4: "font-size: 15px; font-weight: 600; color: #f59e0b; margin: 18px 0 10px;",
+      p: "margin: 18px 0; text-align: justify;",
+      strong: "font-weight: 600; color: #92400e;",
+      em: "font-style: italic; color: #78716c;",
+      a: "color: #f59e0b; text-decoration: none; border-bottom: 1px dashed #f59e0b;",
+      blockquote:
+        "margin: 22px 0; padding: 18px 22px; background: #fffbeb; border-left: 4px solid #f59e0b; color: #57534e; font-style: italic;",
+      code: "background: #fffbeb; color: #92400e; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: #451a03; color: #fcd34d; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 18px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 10px 0;",
+      img: "max-width: 100%; border-radius: 4px; margin: 25px auto; display: block; border: 2px solid #fde68a;",
+      hr: "border: none; height: 1px; background: #f59e0b; margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px;",
+      th: "background: #f59e0b; color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #fde68a; padding: 12px; background: #fffbeb;",
+    },
+  },
+  // 样式23: 电商零售
+  {
+    name: "电商零售",
+    id: "ecommerce-retail",
+    category: "industry",
+    preview: "#e11d48",
+    styles: {
+      container:
+        "font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 16px; color: #334155; line-height: 1.8; padding: 20px;",
+      h1: "font-size: 24px; font-weight: 700; color: #fff; margin: 30px 0 25px; padding: 18px 25px; background: linear-gradient(135deg, #e11d48 0%, #f43f5e 50%, #fb7185 100%); border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(225, 29, 72, 0.3);",
+      h2: "font-size: 18px; font-weight: 600; color: #e11d48; margin: 28px 0 18px; padding: 12px 20px; background: linear-gradient(90deg, #fff1f2, transparent); border-left: 4px solid #e11d48; border-radius: 0 8px 8px 0;",
+      h3: "font-size: 16px; font-weight: 600; color: #be123c; margin: 22px 0 12px; padding: 8px 20px; background: #fff1f2; border-radius: 20px; display: inline-block;",
+      h4: "font-size: 15px; font-weight: 600; color: #e11d48; margin: 18px 0 10px;",
+      p: "margin: 16px 0; text-align: justify;",
+      strong: "font-weight: 600; color: #e11d48;",
+      em: "font-style: italic; color: #64748b;",
+      a: "color: #e11d48; text-decoration: none;",
+      blockquote:
+        "margin: 22px 0; padding: 18px 22px; background: #fff1f2; border-left: 4px solid #e11d48; border-radius: 0 8px 8px 0; color: #475569;",
+      code: "background: #fff1f2; color: #e11d48; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: #4c0519; color: #fda4af; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 16px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 10px 0;",
+      img: "max-width: 100%; border-radius: 12px; margin: 25px auto; display: block; box-shadow: 0 4px 20px rgba(225, 29, 72, 0.15);",
+      hr: "border: none; height: 2px; background: linear-gradient(to right, transparent, #e11d48, transparent); margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px; border-radius: 12px; overflow: hidden;",
+      th: "background: linear-gradient(135deg, #e11d48, #f43f5e); color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #fecdd3; padding: 12px; background: #fff1f2;",
+    },
+  },
+  // 样式24: 法律政务
+  {
+    name: "法律政务",
+    id: "legal-government",
+    category: "industry",
+    preview: "#7c2d12",
+    styles: {
+      container:
+        "font-family: 'SimSun', 'PingFang SC', 'Microsoft YaHei', serif; font-size: 16px; color: #1c1917; line-height: 2; padding: 20px;",
+      h1: "font-size: 24px; font-weight: 700; color: #7c2d12; text-align: center; margin: 30px 0 25px; padding: 15px 30px; border: 2px solid #7c2d12; letter-spacing: 2px;",
+      h2: "font-size: 18px; font-weight: 600; color: #7c2d12; margin: 28px 0 18px; padding: 10px 15px; background: #fef3c7; border-left: 4px solid #7c2d12;",
+      h3: "font-size: 16px; font-weight: 600; color: #92400e; margin: 22px 0 12px; padding-bottom: 8px; border-bottom: 1px solid #7c2d12;",
+      h4: "font-size: 15px; font-weight: 600; color: #7c2d12; margin: 18px 0 10px;",
+      p: "margin: 18px 0; text-align: justify; text-indent: 2em;",
+      strong: "font-weight: 600; color: #7c2d12;",
+      em: "font-style: italic; color: #78716c;",
+      a: "color: #7c2d12; text-decoration: underline;",
+      blockquote:
+        "margin: 22px 0; padding: 18px 22px; background: #fefce8; border-left: 4px solid #7c2d12; color: #44403c;",
+      code: "background: #fef3c7; color: #7c2d12; padding: 3px 8px; border-radius: 2px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: #292524; color: #fef3c7; padding: 20px; border-radius: 4px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 18px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 10px 0;",
+      img: "max-width: 100%; margin: 25px auto; display: block; border: 1px solid #d6d3d1;",
+      hr: "border: none; height: 1px; background: #7c2d12; margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px;",
+      th: "background: #7c2d12; color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #d6d3d1; padding: 12px;",
+    },
+  },
+  // 样式25: 读书笔记 - 胶囊标题
+  {
+    name: "读书笔记",
+    id: "reading-notes",
+    category: "creative",
+    preview: "#1e3a5f",
+    colorFollowable: true,
+    styles: {
+      container:
+        "font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: 16px; color: #333; line-height: 1.9; padding: 20px;",
+      h1: "font-size: 20px; font-weight: 600; color: #fff; text-align: center; margin: 35px auto 25px; padding: 16px 40px; background: #1e3a5f; border-radius: 50px; display: table; box-shadow: 0 2px 10px rgba(30, 58, 95, 0.2);",
+      h2: "font-size: 18px; font-weight: 600; color: #fff; text-align: center; margin: 30px auto 20px; padding: 14px 35px; background: #2d5a87; border-radius: 50px; display: table;",
+      h3: "font-size: 16px; font-weight: 600; color: #1e3a5f; margin: 25px 0 15px; padding: 10px 20px; background: #e8f0f8; border-radius: 8px; display: inline-block;",
+      h4: "font-size: 15px; font-weight: 600; color: #1e3a5f; margin: 20px 0 12px; padding-left: 12px; border-left: 3px solid #1e3a5f;",
+      p: "margin: 18px 0; text-align: justify; text-indent: 2em;",
+      strong: "font-weight: 600; color: #1e3a5f;",
+      em: "font-style: italic; color: #666; background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px;",
+      a: "color: #1e3a5f; text-decoration: none; border-bottom: 1px solid #1e3a5f;",
+      blockquote:
+        "margin: 25px 0; padding: 20px 25px; background: #f8fafc; border-left: 4px solid #1e3a5f; border-radius: 0 8px 8px 0; color: #475569; font-style: italic;",
+      code: "background: #e8f0f8; color: #1e3a5f; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: #1e293b; color: #e2e8f0; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 18px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 12px 0;",
+      img: "max-width: 100%; border-radius: 8px; margin: 25px auto; display: block; box-shadow: 0 2px 10px rgba(0,0,0,0.1);",
+      hr: "border: none; height: 1px; background: linear-gradient(to right, transparent, #1e3a5f, transparent); margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px;",
+      th: "background: #1e3a5f; color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #e2e8f0; padding: 12px;",
+    },
+  },
+  // 样式26: 知识卡片 - 圆角卡片风格
+  {
+    name: "知识卡片",
+    id: "knowledge-card",
+    category: "creative",
+    preview: "#3b82f6",
+    colorFollowable: true,
+    styles: {
+      container:
+        "font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 16px; color: #334155; line-height: 1.85; padding: 20px;",
+      h1: "font-size: 20px; font-weight: 600; color: #fff; text-align: center; margin: 35px auto 25px; padding: 16px 50px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 50px; display: table; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);",
+      h2: "font-size: 18px; font-weight: 600; color: #fff; text-align: center; margin: 30px auto 20px; padding: 12px 30px; background: #3b82f6; border-radius: 30px; display: table;",
+      h3: "font-size: 16px; font-weight: 600; color: #1d4ed8; margin: 25px 0 15px; padding: 8px 16px; background: #eff6ff; border-radius: 6px; display: inline-block;",
+      h4: "font-size: 15px; font-weight: 600; color: #3b82f6; margin: 20px 0 12px;",
+      p: "margin: 16px 0; text-align: justify;",
+      strong: "font-weight: 600; color: #1d4ed8;",
+      em: "font-style: italic; color: #64748b;",
+      a: "color: #3b82f6; text-decoration: none;",
+      blockquote:
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #eff6ff, #dbeafe); border-radius: 12px; color: #475569; border-left: 4px solid #3b82f6;",
+      code: "background: #eff6ff; color: #1d4ed8; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
+      pre: "background: #1e3a8a; color: #bfdbfe; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 16px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 10px 0;",
+      img: "max-width: 100%; border-radius: 12px; margin: 25px auto; display: block; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);",
+      hr: "border: none; height: 2px; background: linear-gradient(to right, transparent, #3b82f6, transparent); margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px; border-radius: 12px; overflow: hidden;",
+      th: "background: #3b82f6; color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #dbeafe; padding: 12px; background: #f8fafc;",
+    },
+  },
+  // 样式27: 成长日记 - 温暖风格
+  {
+    name: "成长日记",
+    id: "growth-diary",
+    category: "creative",
+    preview: "#ea580c",
+    colorFollowable: true,
+    styles: {
+      container:
+        "font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 16px; color: #422006; line-height: 1.9; padding: 20px; background: #fffbeb;",
+      h1: "font-size: 20px; font-weight: 600; color: #fff; text-align: center; margin: 35px auto 25px; padding: 16px 40px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); border-radius: 50px; display: table; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25);",
+      h2: "font-size: 18px; font-weight: 600; color: #fff; text-align: center; margin: 30px auto 20px; padding: 12px 30px; background: #f97316; border-radius: 30px; display: table;",
+      h3: "font-size: 16px; font-weight: 600; color: #c2410c; margin: 25px 0 15px; padding: 8px 16px; background: #fff; border-radius: 8px; display: inline-block; border: 1px solid #fed7aa;",
+      h4: "font-size: 15px; font-weight: 600; color: #ea580c; margin: 20px 0 12px;",
+      p: "margin: 18px 0; text-align: justify;",
+      strong: "font-weight: 600; color: #c2410c;",
+      em: "font-style: italic; color: #78716c; background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px;",
+      a: "color: #ea580c; text-decoration: none;",
+      blockquote:
+        "margin: 25px 0; padding: 20px 25px; background: #fff; border-left: 4px solid #f97316; border-radius: 0 12px 12px 0; color: #57534e;",
+      code: "background: #fff; color: #c2410c; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px; border: 1px solid #fed7aa;",
+      pre: "background: #431407; color: #fed7aa; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
+      ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
+      ol: "margin: 18px 0; padding-left: 25px; list-style-type: decimal;",
+      li: "margin: 12px 0;",
+      img: "max-width: 100%; border-radius: 12px; margin: 25px auto; display: block; border: 2px solid #fed7aa;",
+      hr: "border: none; height: 2px; background: linear-gradient(to right, transparent, #f97316, transparent); margin: 35px 0;",
+      table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px; border-radius: 12px; overflow: hidden;",
+      th: "background: #f97316; color: white; padding: 14px; text-align: left;",
+      td: "border: 1px solid #fed7aa; padding: 12px; background: #fff;",
+    },
+  },
 ];
 
 // 分类定义
@@ -606,4 +892,5 @@ export const categories = [
   { id: "creative", name: "创意" },
   { id: "minimal", name: "极简" },
   { id: "dark", name: "暗色" },
+  { id: "industry", name: "行业" },
 ];

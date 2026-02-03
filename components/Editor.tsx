@@ -15,6 +15,7 @@ interface EditorProps {
   scrollRatio?: number;
   isScrollSource?: boolean;
   renderFileButton?: () => React.ReactNode;
+  onClear?: () => void;
 }
 
 export default function Editor({
@@ -24,9 +25,11 @@ export default function Editor({
   scrollRatio,
   isScrollSource,
   renderFileButton,
+  onClear,
 }: EditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isInternalScroll = useRef(false);
+  const lastScrollTop = useRef(0);
 
   // 处理粘贴事件 - 智能识别富文本
   const handlePaste = useCallback(
@@ -85,7 +88,7 @@ export default function Editor({
     }
   };
 
-  // 同步滚动位置
+  // 同步滚动位置 - 使用原生 DOM 操作避免 React 渲染循环
   useEffect(() => {
     if (isScrollSource || scrollRatio === undefined) return;
 
@@ -94,9 +97,18 @@ export default function Editor({
 
     const { scrollHeight, clientHeight } = textarea;
     const maxScroll = scrollHeight - clientHeight;
-    if (maxScroll > 0) {
+    if (maxScroll <= 0) return;
+
+    const targetScrollTop = Math.round(scrollRatio * maxScroll);
+
+    // 只在确实需要移动时才设置标志
+    if (Math.abs(textarea.scrollTop - targetScrollTop) > 1) {
       isInternalScroll.current = true;
-      textarea.scrollTop = scrollRatio * maxScroll;
+      textarea.scrollTop = targetScrollTop;
+      // 立即重置标志，让后续的用户滚动可以正常触发
+      requestAnimationFrame(() => {
+        isInternalScroll.current = false;
+      });
     }
   }, [scrollRatio, isScrollSource]);
 
@@ -215,6 +227,15 @@ export default function Editor({
             支持从飞书粘贴
           </span>
           {renderFileButton && renderFileButton()}
+          {onClear && (
+            <button
+              onClick={onClear}
+              className="text-xs text-pink-400 hover:text-pink-600 hover:bg-pink-50 px-2 py-1 rounded transition-colors"
+              title="清空内容"
+            >
+              清空
+            </button>
+          )}
         </div>
         <span className="text-xs text-purple-300 bg-purple-50 px-2 py-0.5 rounded-full">{value.length} 字符</span>
       </div>

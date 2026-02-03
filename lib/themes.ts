@@ -8,9 +8,17 @@ export interface Theme {
   styles: {
     container: string;
     h1: string;
+    h1Before?: string;
+    h1After?: string;
     h2: string;
+    h2Before?: string;
+    h2After?: string;
     h3: string;
+    h3Before?: string;
+    h3After?: string;
     h4: string;
+    h4Before?: string;
+    h4After?: string;
     p: string;
     strong: string;
     em: string;
@@ -49,7 +57,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #666; padding: 0 3px;",
       a: "color: #07C160; text-decoration: none; border-bottom: 1px solid #07C160; padding-bottom: 1px;",
       blockquote:
-        "margin: 20px 0; padding: 15px 20px; background: linear-gradient(to right, #f0faf5, #fff); border-left: 4px solid #07C160; border-radius: 0 8px 8px 0; color: #666; font-size: 15px;",
+        "margin: 20px 0; padding: 18px 22px; background: linear-gradient(135deg, #f0faf5 0%, #ecfdf5 50%, #fff 100%); border-left: 5px solid #07C160; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(7, 193, 96, 0.1);",
       code: "background: #e7f7ef; color: #07C160; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace; font-size: 14px; margin: 0 2px;",
       pre: "background: linear-gradient(145deg, #1a1a2e, #16213e); color: #eee; padding: 20px; border-radius: 10px; overflow-x: auto; margin: 20px 0; font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.7; box-shadow: 0 4px 15px rgba(0,0,0,0.1);",
       ul: "margin: 16px 0; padding-left: 10px; list-style: none;",
@@ -80,7 +88,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #666;",
       a: "color: #1677ff; text-decoration: none; font-weight: 500;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #f6f8fa; border-left: 4px solid #1677ff; border-radius: 0 8px 8px 0; color: #555;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #f0f7ff 0%, #e6f4ff 50%, #fff 100%); border-left: 5px solid #1677ff; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(22, 119, 255, 0.1);",
       code: "background: #e6f4ff; color: #1677ff; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #0d1b2a; color: #e0e0e0; padding: 20px; border-radius: 10px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -111,7 +119,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #666;",
       a: "color: #dc2626; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #fef2f2; border-left: 4px solid #dc2626; color: #555;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fff 100%); border-left: 5px solid #dc2626; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);",
       code: "background: #fef2f2; color: #dc2626; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 14px;",
       pre: "background: #1f1f1f; color: #e0e0e0; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -144,7 +152,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #6b7280;",
       a: "color: #8b5cf6; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 20px 25px; background: linear-gradient(135deg, #faf5ff, #f5f3ff); border-left: 4px solid #8b5cf6; border-radius: 0 12px 12px 0; color: #555;",
+        "margin: 22px 0; padding: 20px 25px; background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 50%, #fff 100%); border-left: 5px solid #8b5cf6; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1);",
       code: "background: #f5f3ff; color: #8b5cf6; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: linear-gradient(145deg, #1e1b4b, #312e81); color: #e0e7ff; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -175,7 +183,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #06b6d4; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #ecfeff; border-left: 4px solid #06b6d4; color: #475569;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #fff 100%); border-left: 5px solid #06b6d4; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.1);",
       code: "background: #ecfeff; color: #06b6d4; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #083344; color: #67e8f9; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -206,7 +214,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #6b7280;",
       a: "color: #f97316; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #fff7ed; border-left: 4px solid #f97316; color: #555;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fff 100%); border-left: 5px solid #f97316; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(249, 115, 22, 0.1);",
       code: "background: #fff7ed; color: #f97316; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #431407; color: #fed7aa; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -230,16 +238,20 @@ export const themes: Theme[] = [
     styles: {
       container:
         "font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', sans-serif; font-size: 16px; color: #374151; line-height: 1.85; padding: 20px;",
-      h1: "font-size: 22px; font-weight: 700; color: #ec4899; text-align: center; margin: 30px 0 25px; padding: 15px 20px; position: relative; border-top: 3px solid #ec4899; border-bottom: 3px solid #ec4899;",
-      h2: "font-size: 18px; font-weight: 600; color: #ec4899; margin: 28px 0 18px; padding: 8px 15px 8px 35px; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%23ec4899\"><circle cx=\"12\" cy=\"12\" r=\"8\"/></svg>') no-repeat left center; background-size: 24px;",
-      h3: "font-size: 16px; font-weight: 600; color: #ec4899; margin: 22px 0 12px; padding: 6px 12px 6px 28px; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%23ec4899\"><circle cx=\"12\" cy=\"12\" r=\"5\"/></svg>') no-repeat left center; background-size: 18px;",
-      h4: "font-size: 15px; font-weight: 600; color: #ec4899; margin: 18px 0 10px; padding-left: 20px; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%23ec4899\"><circle cx=\"12\" cy=\"12\" r=\"4\"/></svg>') no-repeat left center; background-size: 14px;",
+      h1: "font-size: 22px; font-weight: 700; color: #fff; text-align: center; margin: 30px 0 25px; padding: 15px 25px; background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); border-radius: 50px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);",
+      h1Before: "content: '𖠚 ';",
+      h1After: "content: ' ✿';",
+      h2: "font-size: 18px; font-weight: 600; color: #ec4899; margin: 28px 0 18px; padding: 10px 20px 10px 35px; background: linear-gradient(90deg, rgba(236, 72, 153, 0.1), transparent); border-left: 4px solid #ec4899; border-radius: 0 8px 8px 0;",
+      h2Before: "content: '✿ ';",
+      h3: "font-size: 16px; font-weight: 600; color: #be185d; margin: 22px 0 12px; padding: 8px 16px 8px 30px; background: #fdf2f8; border-radius: 8px; display: inline-block;",
+      h3After: "content: ' ✿';",
+      h4: "font-size: 15px; font-weight: 600; color: #ec4899; margin: 18px 0 10px; padding-left: 15px; border-left: 3px solid #ec4899;",
       p: "margin: 16px 0; text-align: justify;",
       strong: "font-weight: 600; color: #ec4899;",
       em: "font-style: italic; color: #6b7280;",
       a: "color: #ec4899; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fdf2f8, #fce7f3); border-left: 4px solid #ec4899; border-radius: 0 12px 12px 0; color: #555;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fff 100%); border-left: 5px solid #ec4899; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(236, 72, 153, 0.1);",
       code: "background: #fdf2f8; color: #ec4899; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #500724; color: #fbcfe8; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -270,7 +282,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #6b7280;",
       a: "color: #059669; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #ecfdf5; border-left: 4px solid #059669; color: #555;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #fff 100%); border-left: 5px solid #059669; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);",
       code: "background: #ecfdf5; color: #059669; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #064e3b; color: #a7f3d0; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -301,7 +313,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #78716c;",
       a: "color: #d97706; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #fffbeb; border-left: 4px solid #d97706; color: #555; font-style: italic;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fff 100%); border-left: 5px solid #d97706; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(217, 119, 6, 0.1);",
       code: "background: #fffbeb; color: #d97706; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #451a03; color: #fcd34d; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -334,7 +346,7 @@ export const themes: Theme[] = [
       em: "font-style: italic;",
       a: "color: #6b7280; text-decoration: underline;",
       blockquote:
-        "margin: 25px 0; padding: 0 0 0 25px; border-left: 2px solid #d1d5db; color: #6b7280; font-style: italic;",
+        "margin: 25px 0; padding: 18px 22px; background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 50%, #fff 100%); border-left: 4px solid #6b7280; border-radius: 0 8px 8px 0; color: #374151; font-size: 15px; line-height: 1.8;",
       code: "background: #f3f4f6; color: #374151; padding: 2px 6px; border-radius: 3px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #1f2937; color: #e5e7eb; padding: 20px; border-radius: 6px; overflow-x: auto; margin: 25px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
@@ -365,7 +377,7 @@ export const themes: Theme[] = [
       em: "font-style: italic;",
       a: "color: #18181b; text-decoration: underline;",
       blockquote:
-        "margin: 22px 0; padding: 15px 20px; background: #fafafa; border-left: 4px solid #18181b; color: #52525b;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fafafa 0%, #f4f4f5 50%, #fff 100%); border-left: 4px solid #18181b; border-radius: 0 8px 8px 0; color: #374151; font-size: 15px; line-height: 1.8;",
       code: "background: #f4f4f5; color: #18181b; padding: 2px 6px; border-radius: 3px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #18181b; color: #fafafa; padding: 20px; border-radius: 4px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: square;",
@@ -396,7 +408,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #3b82f6; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 15px 20px; background: #eff6ff; border-left: 3px solid #3b82f6; color: #475569;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #fff 100%); border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);",
       code: "background: #eff6ff; color: #3b82f6; padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #1e293b; color: #93c5fd; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -429,7 +441,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #94a3b8;",
       a: "color: #a78bfa; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: rgba(167, 139, 250, 0.1); border-left: 4px solid #a78bfa; color: #cbd5e1;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(167, 139, 250, 0.08) 50%, rgba(15, 23, 42, 0.3) 100%); border-left: 4px solid #a78bfa; border-radius: 0 8px 8px 0; color: #e2e8f0; font-size: 15px; line-height: 1.8;",
       code: "background: rgba(167, 139, 250, 0.2); color: #c4b5fd; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #1e1b4b; color: #e0e7ff; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7; border: 1px solid rgba(167, 139, 250, 0.2);",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -460,7 +472,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #94a3b8;",
       a: "color: #22d3ee; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: rgba(34, 211, 238, 0.1); border-left: 4px solid #22d3ee; color: #cbd5e1;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(34, 211, 238, 0.08) 50%, rgba(12, 25, 41, 0.3) 100%); border-left: 4px solid #22d3ee; border-radius: 0 8px 8px 0; color: #e2e8f0; font-size: 15px; line-height: 1.8;",
       code: "background: rgba(34, 211, 238, 0.2); color: #67e8f9; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #042f2e; color: #5eead4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -491,7 +503,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #9ca3af;",
       a: "color: #fb7185; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: rgba(251, 113, 133, 0.1); border-left: 4px solid #fb7185; color: #fecdd3;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, rgba(251, 113, 133, 0.15) 0%, rgba(251, 113, 133, 0.08) 50%, rgba(28, 16, 23, 0.3) 100%); border-left: 4px solid #fb7185; border-radius: 0 8px 8px 0; color: #fecdd3; font-size: 15px; line-height: 1.8;",
       code: "background: rgba(251, 113, 133, 0.2); color: #fda4af; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #3f0d1a; color: #fecdd3; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -524,7 +536,7 @@ export const themes: Theme[] = [
       em: "font-style: italic;",
       a: "color: #000; text-decoration: underline;",
       blockquote:
-        "margin: 30px 40px; padding: 0; border: none; font-size: 22px; font-style: italic; color: #333; line-height: 1.6;",
+        "margin: 30px 40px; padding: 20px 25px; background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%); border-left: 4px solid #000; font-size: 17px; font-style: italic; color: #333; line-height: 1.8;",
       code: "background: #f5f5f5; color: #333; padding: 2px 6px; font-family: 'Courier New', monospace; font-size: 15px;",
       pre: "background: #1a1a1a; color: #f5f5f5; padding: 25px; margin: 25px 0; font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.6;",
       ul: "margin: 18px 0; padding-left: 30px; list-style-type: square;",
@@ -547,20 +559,24 @@ export const themes: Theme[] = [
       container:
         "font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 16px; color: #374151; line-height: 2; padding: 25px; background: #fefce8;",
       h1: "font-size: 26px; font-weight: 700; color: #7c3aed; margin: 30px 0 25px; padding: 15px 25px; background: #f5f3ff; border: 2px dashed #7c3aed; border-radius: 12px; text-align: center; transform: rotate(-1deg);",
-      h2: "font-size: 20px; font-weight: 600; color: #7c3aed; margin: 28px 0 18px; padding: 8px 15px; background: linear-gradient(transparent 60%, #ddd6fe 60%); display: inline-block;",
-      h3: "font-size: 17px; font-weight: 600; color: #7c3aed; margin: 22px 0 12px; padding-left: 30px; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%237c3aed\"><path d=\"M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z\"/></svg>') no-repeat left center; background-size: 22px;",
-      h4: "font-size: 15px; font-weight: 600; color: #7c3aed; margin: 18px 0 10px;",
+      h1Before: "content: '📔 ';",
+      h1After: "content: ' 📔';",
+      h2: "font-size: 20px; font-weight: 600; color: #7c3aed; margin: 28px 0 18px; padding: 8px 15px 8px 38px; background: linear-gradient(transparent 60%, #ddd6fe 60%); display: inline-block;",
+      h2Before: "content: '📎 ';",
+      h3: "font-size: 17px; font-weight: 600; color: #6d28d9; margin: 22px 0 12px; padding: 8px 16px 8px 38px; background: linear-gradient(to right, #ddd6fe, transparent); border-radius: 0 16px 16px 0; border-left: 4px solid #7c3aed;",
+      h3Before: "content: '📌 ';",
+      h4: "font-size: 15px; font-weight: 600; color: #7c3aed; margin: 18px 0 10px; padding-left: 20px; border-left: 3px solid #a78bfa;",
       p: "margin: 16px 0;",
       strong: "font-weight: 600; color: #7c3aed; background: linear-gradient(transparent 50%, #fef08a 50%);",
       em: "font-style: italic; color: #6b7280;",
       a: "color: #7c3aed; text-decoration: none; border-bottom: 2px dotted #7c3aed;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #fff; border: 2px solid #e5e7eb; border-radius: 8px; color: #555; transform: rotate(0.5deg);",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fff 0%, #f5f3ff 100%); border: 2px solid #ddd6fe; border-left-width: 5px; border-radius: 12px; color: #555; font-size: 15px; line-height: 1.8;",
       code: "background: #f5f3ff; color: #7c3aed; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #1e1b4b; color: #e0e7ff; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: none;",
       ol: "margin: 16px 0; padding-left: 25px; list-style-type: decimal;",
-      li: "margin: 10px 0; padding-left: 25px; background: url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"%237c3aed\"><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>') no-repeat left center; background-size: 18px;",
+      li: "margin: 10px 0; line-height: 1.8;",
       img: "max-width: 100%; border-radius: 12px; margin: 25px auto; display: block; border: 3px solid #e5e7eb; transform: rotate(1deg);",
       hr: "border: none; height: 2px; background: repeating-linear-gradient(90deg, #7c3aed 0px, #7c3aed 5px, transparent 5px, transparent 10px); margin: 35px 0;",
       table: "width: 100%; border-collapse: collapse; margin: 22px 0; font-size: 14px; border: 2px solid #7c3aed; border-radius: 8px;",
@@ -586,7 +602,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #0ea5e9; text-decoration: none;",
       blockquote:
-        "margin: 20px 0; padding: 12px 16px; background: #f8fafc; border-left: 4px solid #0ea5e9; color: #475569; font-size: 14px;",
+        "margin: 20px 0; padding: 16px 20px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9; border-radius: 0 8px 8px 0; color: #475569; font-size: 15px; line-height: 1.7;",
       code: "background: #f1f5f9; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', Menlo, monospace; font-size: 13px;",
       pre: "background: #0f172a; color: #e2e8f0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; margin: 20px 0; font-family: 'SF Mono', 'Fira Code', Menlo, monospace; font-size: 13px; line-height: 1.6;",
       ul: "margin: 14px 0; padding-left: 24px; list-style-type: disc;",
@@ -619,7 +635,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #6366f1; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #eef2ff, #faf5ff); border-left: 4px solid #6366f1; border-radius: 0 12px 12px 0; color: #475569;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #fff 100%); border-left: 5px solid #6366f1; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);",
       code: "background: #eef2ff; color: #6366f1; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: linear-gradient(145deg, #1e1b4b, #312e81); color: #e0e7ff; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -650,7 +666,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #0f4c81; text-decoration: none; border-bottom: 1px solid #0f4c81;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #f8fafc; border-left: 4px solid #0f4c81; color: #475569; font-style: italic;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%); border-left: 5px solid #0f4c81; border-radius: 0 8px 8px 0; color: #374151; font-size: 15px; line-height: 1.8;",
       code: "background: #f0f7ff; color: #0f4c81; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #0f172a; color: #94a3b8; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -681,7 +697,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #10b981; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #ecfdf5; border-left: 4px solid #10b981; border-radius: 0 8px 8px 0; color: #475569;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #fff 100%); border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);",
       code: "background: #ecfdf5; color: #059669; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #064e3b; color: #a7f3d0; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -712,7 +728,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #78716c;",
       a: "color: #f59e0b; text-decoration: none; border-bottom: 1px dashed #f59e0b;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #fffbeb; border-left: 4px solid #f59e0b; color: #57534e; font-style: italic;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fff 100%); border-left: 5px solid #f59e0b; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);",
       code: "background: #fffbeb; color: #92400e; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #451a03; color: #fcd34d; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
@@ -743,7 +759,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #e11d48; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #fff1f2; border-left: 4px solid #e11d48; border-radius: 0 8px 8px 0; color: #475569;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fff 100%); border-left: 5px solid #e11d48; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(225, 29, 72, 0.1);",
       code: "background: #fff1f2; color: #e11d48; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #4c0519; color: #fda4af; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -774,7 +790,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #78716c;",
       a: "color: #7c2d12; text-decoration: underline;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: #fefce8; border-left: 4px solid #7c2d12; color: #44403c;",
+        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #fefce8 0%, #fef9c3 50%, #fff 100%); border-left: 5px solid #7c2d12; border-radius: 0 8px 8px 0; color: #374151; font-size: 15px; line-height: 1.8;",
       code: "background: #fef3c7; color: #7c2d12; padding: 3px 8px; border-radius: 2px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #292524; color: #fef3c7; padding: 20px; border-radius: 4px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
@@ -806,7 +822,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #666; background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px;",
       a: "color: #1e3a5f; text-decoration: none; border-bottom: 1px solid #1e3a5f;",
       blockquote:
-        "margin: 25px 0; padding: 20px 25px; background: #f8fafc; border-left: 4px solid #1e3a5f; border-radius: 0 8px 8px 0; color: #475569; font-style: italic;",
+        "margin: 25px 0; padding: 20px 25px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #fff 100%); border-left: 5px solid #1e3a5f; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.9; box-shadow: 0 2px 8px rgba(30, 58, 95, 0.08);",
       code: "background: #e8f0f8; color: #1e3a5f; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #1e293b; color: #e2e8f0; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",
@@ -838,7 +854,7 @@ export const themes: Theme[] = [
       em: "font-style: italic; color: #64748b;",
       a: "color: #3b82f6; text-decoration: none;",
       blockquote:
-        "margin: 22px 0; padding: 18px 22px; background: linear-gradient(135deg, #eff6ff, #dbeafe); border-radius: 12px; color: #475569; border-left: 4px solid #3b82f6;",
+        "margin: 22px 0; padding: 20px 25px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #fff 100%); border-left: 5px solid #3b82f6; border-radius: 12px; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);",
       code: "background: #eff6ff; color: #1d4ed8; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px;",
       pre: "background: #1e3a8a; color: #bfdbfe; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 16px 0; padding-left: 25px; list-style-type: disc;",
@@ -862,15 +878,20 @@ export const themes: Theme[] = [
       container:
         "font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; font-size: 16px; color: #422006; line-height: 1.9; padding: 20px; background: #fffbeb;",
       h1: "font-size: 20px; font-weight: 600; color: #fff; text-align: center; margin: 35px auto 25px; padding: 16px 40px; background: linear-gradient(135deg, #ea580c 0%, #f97316 100%); border-radius: 50px; display: table; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.25);",
+      h1Before: "content: '💕 ';",
+      h1After: "content: ' 💕';",
       h2: "font-size: 18px; font-weight: 600; color: #fff; text-align: center; margin: 30px auto 20px; padding: 12px 30px; background: #f97316; border-radius: 30px; display: table;",
-      h3: "font-size: 16px; font-weight: 600; color: #c2410c; margin: 25px 0 15px; padding: 8px 16px; background: #fff; border-radius: 8px; display: inline-block; border: 1px solid #fed7aa;",
-      h4: "font-size: 15px; font-weight: 600; color: #ea580c; margin: 20px 0 12px;",
+      h2Before: "content: '🌸 ';",
+      h2After: "content: ' 🌸';",
+      h3: "font-size: 16px; font-weight: 600; color: #c2410c; margin: 25px 0 15px; padding: 8px 16px 8px 35px; background: #fff; border-radius: 8px; display: inline-block; border: 1px solid #fed7aa;",
+      h3Before: "content: '🌷 ';",
+      h4: "font-size: 15px; font-weight: 600; color: #ea580c; margin: 20px 0 12px; padding-left: 18px; border-left: 3px solid #fdba74;",
       p: "margin: 18px 0; text-align: justify;",
       strong: "font-weight: 600; color: #c2410c;",
       em: "font-style: italic; color: #78716c; background: linear-gradient(transparent 60%, #fef08a 60%); padding: 0 2px;",
       a: "color: #ea580c; text-decoration: none;",
       blockquote:
-        "margin: 25px 0; padding: 20px 25px; background: #fff; border-left: 4px solid #f97316; border-radius: 0 12px 12px 0; color: #57534e;",
+        "margin: 25px 0; padding: 20px 25px; background: linear-gradient(135deg, #fff 0%, #fffbeb 50%, #fff7ed 100%); border-left: 5px solid #f97316; border-radius: 0 12px 12px 0; color: #374151; font-size: 15px; line-height: 1.8; box-shadow: 0 2px 8px rgba(249, 115, 22, 0.08);",
       code: "background: #fff; color: #c2410c; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 14px; border: 1px solid #fed7aa;",
       pre: "background: #431407; color: #fed7aa; padding: 20px; border-radius: 12px; overflow-x: auto; margin: 22px 0; font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: 13px; line-height: 1.7;",
       ul: "margin: 18px 0; padding-left: 25px; list-style-type: disc;",

@@ -167,6 +167,13 @@ export default function Home() {
     setShowLanding(false);
   };
 
+  // 清空内容
+  const handleClear = useCallback(() => {
+    if (confirm("确定要清空所有内容吗？")) {
+      setMarkdown("");
+    }
+  }, []);
+
   // 同步滚动状态
   const [scrollRatio, setScrollRatio] = useState(0);
   const [scrollSource, setScrollSource] = useState<ScrollSource>(null);
@@ -174,8 +181,15 @@ export default function Home() {
 
   // 处理编辑器滚动
   const handleEditorScroll = useCallback((ratio: number) => {
+    // 如果正在同步预览区，忽略编辑器的滚动
+    if (scrollSource === "preview") return;
+
+    // 如果比例变化很小，忽略
+    if (Math.abs(ratio - scrollRatio) < 0.01) return;
+
     setScrollSource("editor");
     setScrollRatio(ratio);
+
     // 清除之前的定时器
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
@@ -184,19 +198,26 @@ export default function Home() {
     scrollTimeoutRef.current = setTimeout(() => {
       setScrollSource(null);
     }, 100);
-  }, []);
+  }, [scrollSource, scrollRatio]);
 
   // 处理预览区滚动
   const handlePreviewScroll = useCallback((ratio: number) => {
+    // 如果正在同步编辑器，忽略预览区的滚动
+    if (scrollSource === "editor") return;
+
+    // 如果比例变化很小，忽略
+    if (Math.abs(ratio - scrollRatio) < 0.01) return;
+
     setScrollSource("preview");
     setScrollRatio(ratio);
+
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
     scrollTimeoutRef.current = setTimeout(() => {
       setScrollSource(null);
     }, 100);
-  }, []);
+  }, [scrollSource, scrollRatio]);
 
   const html = useMemo(() => {
     return parseMarkdown(
@@ -245,7 +266,7 @@ export default function Home() {
   return (
     <div className="h-screen flex flex-col bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
       {/* 顶部工具栏 */}
-      <header className="flex items-center justify-between px-4 py-3 bg-white/80 backdrop-blur-sm border-b-2 border-pink-100 shadow-sm relative z-[102]">
+      <header className="flex items-center justify-between px-4 py-4 bg-white/80 backdrop-blur-sm border-b-2 border-pink-100 shadow-sm relative z-[102]">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowLanding(true)}
@@ -317,6 +338,7 @@ export default function Home() {
             onScroll={handleEditorScroll}
             scrollRatio={scrollRatio}
             isScrollSource={scrollSource === "editor"}
+            onClear={handleClear}
             renderFileButton={() => (
               <ImportExport
                 markdown={markdown}

@@ -43,7 +43,8 @@ const highlightExtension = {
   name: "highlight",
   level: "inline" as const,
   start(src: string) {
-    return src.indexOf("==");
+    const match = src.match(/==/);
+    return match ? match.index : -1;
   },
   tokenizer(src: string) {
     const rule = /^==([^=]+)==/;
@@ -52,13 +53,13 @@ const highlightExtension = {
       return {
         type: "highlight",
         raw: match[0],
-        text: match[1],
+        text: match[1].trim(),
       };
     }
     return undefined;
   },
   renderer(token: { text: string }) {
-    return `<mark class="highlight">${token.text}</mark>`;
+    return `<mark>${token.text}</mark>`;
   },
 };
 
@@ -282,14 +283,8 @@ function applyCustomStyles(
   // 引用块特殊处理：只替换背景和边框，保留文字颜色
   const replaceBlockquoteColors = (style: string) => {
     let result = style;
-    // 替换 linear-gradient 中的颜色
-    result = result.replace(/linear-gradient\([^)]+\)/g, (match) => {
-      return match.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, () => {
-        return lightenColor(primaryColor, 0.15);
-      });
-    });
-    // 替换 background: #xxx
-    result = result.replace(/background:\s*(#[0-9a-fA-F]{3,6})/g, () => {
+    // 替换 background: #xxx 纯色背景（但保留渐变背景）
+    result = result.replace(/background:\s*(#[0-9a-fA-F]{3,6})(?!\s*\d)/g, () => {
       return `background: ${lightenColor(primaryColor, 0.1)}`;
     });
     // 替换 border 中的颜色
@@ -337,15 +332,23 @@ export function createMarkdownRenderer(
 
   // 标题
   renderer.heading = function ({ tokens, depth }: Tokens.Heading): string {
-    const styleMap: Record<number, string> = {
-      1: styles.h1,
-      2: styles.h2,
-      3: styles.h3,
-      4: styles.h4,
+    const styleMap: Record<number, { base: string; before?: string; after?: string }> = {
+      1: { base: styles.h1, before: styles.h1Before, after: styles.h1After },
+      2: { base: styles.h2, before: styles.h2Before, after: styles.h2After },
+      3: { base: styles.h3, before: styles.h3Before, after: styles.h3After },
+      4: { base: styles.h4, before: styles.h4Before, after: styles.h4After },
     };
-    const style = styleMap[depth] || styles.h4;
+    const { base, before, after } = styleMap[depth] || { base: styles.h4 };
     const content = this.parser.parseInline(tokens);
-    return `<h${depth} style="${style}">${content}</h${depth}>`;
+    // 从 before/after 中提取符号（content: '符号 ' -> 符号）
+    const getSymbol = (style?: string) => {
+      if (!style) return '';
+      const match = style.match(/content:\s*['"]([^'"]+)['"]/);
+      return match ? match[1].trim() : '';
+    };
+    const beforeSymbol = getSymbol(before);
+    const afterSymbol = getSymbol(after);
+    return `<h${depth} style="${base}">${beforeSymbol}${content}${afterSymbol}</h${depth}>`;
   };
 
   // 段落
@@ -607,11 +610,17 @@ export function parseMarkdown(
   // 后处理 HTML，处理未解析的加粗语法
   let content = postprocessHtml(rawHtml, styles.strong);
 
-  // 处理高亮文本样式
+  // 处理高亮文本 ==text==
   const primaryColor = customStyles?.primaryColor || theme.preview;
   const highlightStyle = `background: linear-gradient(transparent 60%, ${primaryColor}40 60%); padding: 0 2px;`;
+  // 先处理高亮扩展生成的 <mark> 标签
   content = content.replace(
-    /<mark class="highlight">([^<]+)<\/mark>/g,
+    /<mark>([^<]+)<\/mark>/g,
+    `<mark style="${highlightStyle}">$1</mark>`
+  );
+  // 然后处理原始的 ==text== 格式（以防扩展没有匹配到）
+  content = content.replace(
+    /==([^=]+)==/g,
     `<mark style="${highlightStyle}">$1</mark>`
   );
 

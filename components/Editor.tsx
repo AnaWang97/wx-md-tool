@@ -194,11 +194,11 @@ export default function Editor({
 
       onChange(result.value);
 
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(result.selectionStart, result.selectionEnd);
-      }, 0);
-    },
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(result.selectionEnd, result.selectionEnd);
+    }, 0);
+  },
     [value, onChange]
   );
 

@@ -5,6 +5,9 @@ import { defineConfig } from "vitest/config";
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  test: {
+    exclude: ["**/.next/**", "**/.worktrees/**", "**/node_modules/**"],
+  },
   resolve: {
     alias: {
       "@": rootDir,

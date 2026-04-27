@@ -6,6 +6,11 @@ import {
   hasHtmlContent,
   getHtmlFromClipboard,
 } from "@/lib/html-to-markdown";
+import {
+  createLayoutComponentTemplate,
+  type LayoutComponentId,
+} from "@/lib/layout-components";
+import { insertBlockTemplate } from "@/lib/insert-template";
 import EditorToolbar from "./EditorToolbar";
 
 interface EditorProps {
@@ -29,7 +34,6 @@ export default function Editor({
 }: EditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isInternalScroll = useRef(false);
-  const lastScrollTop = useRef(0);
 
   // 处理粘贴事件 - 智能识别富文本
   const handlePaste = useCallback(
@@ -177,6 +181,27 @@ export default function Editor({
     [value, onChange]
   );
 
+  const handleInsertComponent = useCallback(
+    (id: LayoutComponentId) => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const selectedText = value.substring(start, end);
+      const template = createLayoutComponentTemplate(id, selectedText);
+      const result = insertBlockTemplate(value, start, end, template);
+
+      onChange(result.value);
+
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(result.selectionStart, result.selectionEnd);
+      }, 0);
+    },
+    [value, onChange]
+  );
+
   // 快捷键处理
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -239,7 +264,11 @@ export default function Editor({
         </div>
         <span className="text-xs text-purple-300 bg-purple-50 px-2 py-0.5 rounded-full">{value.length} 字符</span>
       </div>
-      <EditorToolbar onInsert={handleInsert} onWrap={handleWrap} />
+      <EditorToolbar
+        onInsert={handleInsert}
+        onWrap={handleWrap}
+        onInsertComponent={handleInsertComponent}
+      />
       <textarea
         ref={textareaRef}
         value={value}

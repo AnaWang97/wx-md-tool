@@ -1,0 +1,15 @@
+import { describe, expect, it } from "vitest";
+import { parseMarkdown } from "./markdown";
+import { themes } from "./themes";
+
+describe("parseMarkdown", () => {
+  it("renders existing headings and paragraphs with inline styles", () => {
+    const html = parseMarkdown("## 小标题\n\n正文内容", themes[0]);
+
+    expect(html).toContain("<section");
+    expect(html).toContain("<h2");
+    expect(html).toContain("小标题");
+    expect(html).toContain("<p");
+    expect(html).toContain("正文内容");
+  });
+});

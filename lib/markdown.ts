@@ -580,6 +580,95 @@ function postprocessHtml(html: string, strongStyle: string): string {
   return result;
 }
 
+function getPrimaryColor(theme: Theme, customStyles?: CustomStyles): string {
+  return customStyles?.primaryColor || theme.preview;
+}
+
+function colorToRgba(color: string, alpha: number): string {
+  if (!color.startsWith("#")) return color;
+
+  const hex = color.slice(1);
+  const fullHex =
+    hex.length === 3
+      ? hex
+          .split("")
+          .map((char) => char + char)
+          .join("")
+      : hex;
+  const r = parseInt(fullHex.slice(0, 2), 16);
+  const g = parseInt(fullHex.slice(2, 4), 16);
+  const b = parseInt(fullHex.slice(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function stripOuterParagraph(html: string): string {
+  return html.trim().replace(/^<p([^>]*)>([\s\S]*)<\/p>$/i, "<span$1>$2</span>");
+}
+
+function renderLayoutComponentBlocks(
+  markdown: string,
+  theme: Theme,
+  customStyles?: CustomStyles
+): string {
+  const primaryColor = getPrimaryColor(theme, customStyles);
+  const lightColor = colorToRgba(primaryColor, 0.1);
+
+  return markdown.replace(
+    /^:::(card|tip|cta)[ \t]*\n([\s\S]*?)\n:::[ \t]*$/gm,
+    (_match, type: "card" | "tip" | "cta", body: string) => {
+      const trimmedBody = body.trim();
+
+      if (type === "card") {
+        const innerHtml = marked.parse(trimmedBody) as string;
+        const style = `margin: 22px 0; padding: 18px 20px; border: 1px solid ${primaryColor}; border-left: 5px solid ${primaryColor}; border-radius: 10px; background: #fff; box-shadow: 0 4px 14px ${colorToRgba(primaryColor, 0.12)};`;
+
+        return `<section data-layout-component="card" style="${style}">${innerHtml}</section>`;
+      }
+
+      if (type === "tip") {
+        const lines = trimmedBody.split(/\n+/);
+        const title = lines.shift()?.trim() || "提示";
+        const content = lines.join("\n").trim();
+        const titleStyle = `margin: 0 0 8px; font-weight: 700; color: ${primaryColor};`;
+        const boxStyle = `margin: 22px 0; padding: 16px 18px; border-radius: 10px; background: ${lightColor}; border: 1px solid ${colorToRgba(primaryColor, 0.25)};`;
+        const contentHtml = content ? (marked.parse(content) as string) : "";
+
+        return `<section data-layout-component="tip" style="${boxStyle}"><p style="${titleStyle}">${escapeHtml(title)}</p>${contentHtml}</section>`;
+      }
+
+      const linkMatch = trimmedBody.match(/\[([^\]]+)\]\(([^)]+)\)/);
+      const linkLabel = linkMatch?.[1];
+      const linkHref = linkMatch?.[2];
+      const bodyWithoutLink = linkMatch
+        ? trimmedBody.replace(linkMatch[0], "").trim()
+        : trimmedBody;
+      const lines = bodyWithoutLink.split(/\n+/);
+      const title = lines.shift()?.trim() || "行动标题";
+      const content = lines.join("\n").trim();
+      const sectionStyle = `margin: 26px 0; padding: 20px; text-align: center; border-radius: 12px; background: ${lightColor}; border: 1px solid ${colorToRgba(primaryColor, 0.25)};`;
+      const titleStyle = `margin: 0 0 10px; font-size: 18px; font-weight: 700; color: ${primaryColor};`;
+      const contentHtml = content
+        ? stripOuterParagraph(marked.parse(content) as string)
+        : "";
+      const buttonHtml =
+        linkLabel && linkHref
+          ? `<p style="margin: 16px 0 0;"><a href="${escapeHtml(linkHref)}" style="display: inline-block; padding: 8px 18px; border-radius: 999px; background: ${primaryColor}; color: #fff; text-decoration: none; font-weight: 600;">${escapeHtml(linkLabel)}</a></p>`
+          : "";
+
+      return `<section data-layout-component="cta" style="${sectionStyle}"><p style="${titleStyle}">${escapeHtml(title)}</p>${contentHtml}${buttonHtml}</section>`;
+    }
+  );
+}
+
 export function parseMarkdown(
   markdown: string,
   theme: Theme,
@@ -606,7 +695,12 @@ export function parseMarkdown(
 
   // 预处理 Markdown，修复常见格式问题
   const processedMarkdown = preprocessMarkdown(markdown);
-  const rawHtml = marked.parse(processedMarkdown) as string;
+  const markdownWithLayoutComponents = renderLayoutComponentBlocks(
+    processedMarkdown,
+    theme,
+    customStyles
+  );
+  const rawHtml = marked.parse(markdownWithLayoutComponents) as string;
   // 后处理 HTML，处理未解析的加粗语法
   let content = postprocessHtml(rawHtml, styles.strong);
 

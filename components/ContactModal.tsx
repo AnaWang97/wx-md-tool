@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 interface ContactModalProps {
@@ -80,9 +81,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         <div className="bg-white rounded-2xl p-4 mb-6 shadow-inner border border-pink-100">
           <div className="aspect-square w-full max-w-[200px] mx-auto bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center overflow-hidden">
             {/* 如果有二维码图片，显示图片；否则显示占位符 */}
-            <img
+            <Image
               src="/wechat-qr.png"
               alt="微信二维码"
+              width={200}
+              height={200}
               className="w-full h-full object-contain"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;

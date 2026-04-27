@@ -28,7 +28,11 @@ export default function CustomStylePanel({
   const [panelPosition, setPanelPosition] = useState({ top: 0, right: 0 });
 
   useEffect(() => {
-    setMounted(true);
+    const mountedTimer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+
+    return () => clearTimeout(mountedTimer);
   }, []);
 
   useEffect(() => {

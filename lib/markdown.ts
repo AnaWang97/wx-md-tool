@@ -163,19 +163,6 @@ function applyCustomStyles(
   // 颜色正则
   const colorRegex = /#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|rgb\([^)]+\)|rgba\([^)]+\)/g;
 
-  // 生成深色版本（用于渐变的深色端）
-  const darkenColor = (color: string, amount: number = 0.2): string => {
-    // 简单实现：将 hex 颜色变暗
-    if (color.startsWith('#')) {
-      const hex = color.slice(1);
-      const r = Math.max(0, parseInt(hex.slice(0, 2), 16) - Math.round(255 * amount));
-      const g = Math.max(0, parseInt(hex.slice(2, 4), 16) - Math.round(255 * amount));
-      const b = Math.max(0, parseInt(hex.slice(4, 6), 16) - Math.round(255 * amount));
-      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-    }
-    return color;
-  };
-
   // 生成浅色版本（用于背景）
   const lightenColor = (color: string, alpha: number = 0.1): string => {
     if (color.startsWith('#')) {
@@ -195,31 +182,6 @@ function applyCustomStyles(
     );
   };
 
-  // 替换背景色（包括纯色和渐变）
-  const replaceBackgroundColor = (style: string) => {
-    let result = style;
-    // 替换 linear-gradient
-    result = result.replace(/linear-gradient\([^)]+\)/g, () => {
-      return `linear-gradient(135deg, ${primaryColor} 0%, ${darkenColor(primaryColor, 0.15)} 100%)`;
-    });
-    // 替换纯色 background（但保留 background: #fff 等浅色背景）
-    result = result.replace(/background:\s*(#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3})(?![^;]*gradient)/g, (match, color) => {
-      // 判断是否是深色背景（用于胶囊标题等）
-      const hex = color.slice(1);
-      const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16);
-      const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16);
-      const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16);
-      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-      // 如果原来是深色背景，替换为主题色
-      if (brightness < 180) {
-        return `background: ${primaryColor}`;
-      }
-      // 如果是浅色背景，替换为主题色的浅色版本
-      return `background: ${lightenColor(primaryColor, 0.1)}`;
-    });
-    return result;
-  };
-
   // 智能替换颜色：保留白色文字，替换其他颜色
   const smartReplaceColors = (style: string) => {
     // 替换 background 和 border 中的颜色
@@ -227,7 +189,7 @@ function applyCustomStyles(
 
     // 替换 linear-gradient 中的颜色（但保留 transparent）
     result = result.replace(/linear-gradient\([^)]+\)/g, (match) => {
-      return match.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, (color) => {
+      return match.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, () => {
         return primaryColor;
       });
     });

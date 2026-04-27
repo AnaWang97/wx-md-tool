@@ -111,31 +111,37 @@ export default function Home() {
 
   // 检查用户是否已经访问过 & 加载保存的内容
   useEffect(() => {
-    const hasVisited = localStorage.getItem("wx-md-tool-visited");
-    if (hasVisited) {
-      setShowLanding(false);
-    }
-    // 加载保存的内容
-    const savedContent = localStorage.getItem("wx-md-tool-content");
-    if (savedContent) {
-      setMarkdown(savedContent);
-    }
-    // 加载保存的主题
-    const savedThemeId = localStorage.getItem("wx-md-tool-theme");
-    if (savedThemeId) {
-      const savedTheme = themes.find(t => t.id === savedThemeId);
-      if (savedTheme) {
-        setTheme(savedTheme);
+    const loadTimer = setTimeout(() => {
+      const hasVisited = localStorage.getItem("wx-md-tool-visited");
+      if (hasVisited) {
+        setShowLanding(false);
       }
-    }
-    setIsLoaded(true);
+      // 加载保存的内容
+      const savedContent = localStorage.getItem("wx-md-tool-content");
+      if (savedContent) {
+        setMarkdown(savedContent);
+      }
+      // 加载保存的主题
+      const savedThemeId = localStorage.getItem("wx-md-tool-theme");
+      if (savedThemeId) {
+        const savedTheme = themes.find(t => t.id === savedThemeId);
+        if (savedTheme) {
+          setTheme(savedTheme);
+        }
+      }
+      setIsLoaded(true);
+    }, 0);
+
+    return () => clearTimeout(loadTimer);
   }, []);
 
   // 自动保存内容（防抖）
   useEffect(() => {
     if (!isLoaded) return;
 
-    setSaveStatus("saving");
+    const savingStatusTimer = setTimeout(() => {
+      setSaveStatus("saving");
+    }, 0);
 
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
@@ -149,6 +155,7 @@ export default function Home() {
     }, 1000);
 
     return () => {
+      clearTimeout(savingStatusTimer);
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }

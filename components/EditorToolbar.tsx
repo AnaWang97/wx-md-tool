@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   articleComponents,
   quoteComponents,
@@ -70,18 +70,47 @@ export default function EditorToolbar({
   const [isQuoteMenuOpen, setIsQuoteMenuOpen] = useState(false);
   const [isAlignMenuOpen, setIsAlignMenuOpen] = useState(false);
   const [isDividerMenuOpen, setIsDividerMenuOpen] = useState(false);
+  const [dividerMenuPosition, setDividerMenuPosition] = useState({ left: 8, top: 40 });
+  const toolbarRef = useRef<HTMLDivElement>(null);
   const componentMenuRef = useRef<HTMLDivElement>(null);
   const alignMenuRef = useRef<HTMLDivElement>(null);
   const dividerMenuRef = useRef<HTMLDivElement>(null);
+  const dividerButtonRef = useRef<HTMLButtonElement>(null);
+
+  const updateDividerMenuPosition = useCallback(() => {
+    const toolbar = toolbarRef.current;
+    const button = dividerButtonRef.current;
+
+    if (!toolbar || !button) return;
+
+    const toolbarRect = toolbar.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+    const menuWidth = 256;
+    const padding = 8;
+    const maxLeft = Math.max(padding, toolbarRect.width - menuWidth - padding);
+    const nextLeft = Math.min(
+      Math.max(buttonRect.left - toolbarRect.left, padding),
+      maxLeft
+    );
+
+    setDividerMenuPosition({
+      left: nextLeft,
+      top: buttonRect.bottom - toolbarRect.top + 8,
+    });
+  }, []);
 
   useEffect(() => {
     if (!isComponentMenuOpen && !isAlignMenuOpen && !isDividerMenuOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
       if (
         isDividerMenuOpen &&
         dividerMenuRef.current &&
-        !dividerMenuRef.current.contains(event.target as Node)
+        dividerButtonRef.current &&
+        !dividerMenuRef.current.contains(target) &&
+        !dividerButtonRef.current.contains(target)
       ) {
         setIsDividerMenuOpen(false);
       }
@@ -89,7 +118,7 @@ export default function EditorToolbar({
       if (
         isComponentMenuOpen &&
         componentMenuRef.current &&
-        !componentMenuRef.current.contains(event.target as Node)
+        !componentMenuRef.current.contains(target)
       ) {
         setIsComponentMenuOpen(false);
         setIsQuoteMenuOpen(false);
@@ -98,7 +127,7 @@ export default function EditorToolbar({
       if (
         isAlignMenuOpen &&
         alignMenuRef.current &&
-        !alignMenuRef.current.contains(event.target as Node)
+        !alignMenuRef.current.contains(target)
       ) {
         setIsAlignMenuOpen(false);
       }
@@ -108,9 +137,38 @@ export default function EditorToolbar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isAlignMenuOpen, isComponentMenuOpen, isDividerMenuOpen]);
 
+  useEffect(() => {
+    if (!isDividerMenuOpen) return;
+
+    window.addEventListener("resize", updateDividerMenuPosition);
+    window.addEventListener("scroll", updateDividerMenuPosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updateDividerMenuPosition);
+      window.removeEventListener("scroll", updateDividerMenuPosition, true);
+    };
+  }, [isDividerMenuOpen, updateDividerMenuPosition]);
+
   const insertDividerStyle = (id: DividerStyleId) => {
     onInsert(`\n${createDividerStyleTemplate(id)}\n`, "", "");
     setIsDividerMenuOpen(false);
+  };
+
+  const insertDefaultDivider = () => {
+    onInsert("\n---\n", "", "");
+    setIsDividerMenuOpen(false);
+  };
+
+  const handleDividerMenuToggle = () => {
+    if (isDividerMenuOpen) {
+      setIsDividerMenuOpen(false);
+    } else {
+      updateDividerMenuPosition();
+      setIsDividerMenuOpen(true);
+    }
+    setIsAlignMenuOpen(false);
+    setIsComponentMenuOpen(false);
+    setIsQuoteMenuOpen(false);
   };
 
   const currentToolbarAlign =
@@ -265,12 +323,7 @@ export default function EditorToolbar({
         </svg>
       ),
       label: "分割线",
-      action: () => {
-        setIsDividerMenuOpen((open) => !open);
-        setIsAlignMenuOpen(false);
-        setIsComponentMenuOpen(false);
-        setIsQuoteMenuOpen(false);
-      },
+      action: () => undefined,
       menu: "divider",
       divider: true,
     },
@@ -291,16 +344,19 @@ export default function EditorToolbar({
   ];
 
   return (
-    <div className="relative flex items-center bg-white/90 border-b-2 border-pink-100 overflow-visible">
+    <div
+      ref={toolbarRef}
+      className="relative flex items-center bg-white/90 border-b-2 border-pink-100 overflow-visible"
+    >
       <div className="flex min-w-0 flex-1 items-center gap-0.5 px-2 py-1.5 overflow-x-auto">
         {tools.map((tool, index) => (
           <div
             key={index}
-            ref={tool.menu === "divider" ? dividerMenuRef : undefined}
             className="relative flex items-center"
           >
             <button
-              onClick={tool.action}
+              ref={tool.menu === "divider" ? dividerButtonRef : undefined}
+              onClick={tool.menu === "divider" ? handleDividerMenuToggle : tool.action}
               title={tool.label}
               className={`p-1.5 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center justify-center min-w-[28px] h-7 ${
                 tool.menu === "divider" && isDividerMenuOpen ? "bg-pink-100" : ""
@@ -308,63 +364,6 @@ export default function EditorToolbar({
             >
               {tool.icon}
             </button>
-            {tool.menu === "divider" && (
-              <div
-                aria-hidden={!isDividerMenuOpen}
-                className={`absolute left-0 top-full mt-2 w-64 max-h-[70vh] overflow-y-auto rounded-xl border-2 border-pink-100 bg-white py-2 shadow-xl z-[90] ${
-                  isDividerMenuOpen ? "" : "hidden"
-                }`}
-              >
-                <div className="px-3 pb-2 border-b border-pink-100">
-                  <p className="text-xs font-medium text-purple-600">分割线样式</p>
-                  <p className="mt-1 text-[11px] text-pink-400">
-                    默认样式不变，可选择更细的装饰线
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    onInsert("\n---\n", "", "");
-                    setIsDividerMenuOpen(false);
-                  }}
-                  className="w-full px-3 py-2.5 text-left transition-colors hover:bg-pink-50"
-                >
-                  <span className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-xs font-bold text-purple-600">
-                      默
-                    </span>
-                    <span>
-                      <span className="block text-sm font-semibold text-purple-700">
-                        默认样式
-                      </span>
-                      <span className="block text-xs text-pink-400">
-                        保持当前主题原始分割线
-                      </span>
-                    </span>
-                  </span>
-                </button>
-                {dividerStyleOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    onClick={() => insertDividerStyle(option.id)}
-                    className="w-full px-3 py-2.5 text-left transition-colors hover:bg-pink-50"
-                  >
-                    <span className="flex items-center gap-3">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-xs font-bold text-purple-600">
-                        {option.icon}
-                      </span>
-                      <span>
-                        <span className="block text-sm font-semibold text-purple-700">
-                          {option.label}
-                        </span>
-                        <span className="block text-xs text-pink-400">
-                          {option.description}
-                        </span>
-                      </span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
             {tool.divider && (
               <div className="w-px h-4 bg-pink-200 mx-1" />
             )}
@@ -377,6 +376,7 @@ export default function EditorToolbar({
           <button
             onClick={() => {
               setIsAlignMenuOpen((open) => !open);
+              setIsDividerMenuOpen(false);
               setIsComponentMenuOpen(false);
               setIsQuoteMenuOpen(false);
             }}
@@ -424,6 +424,7 @@ export default function EditorToolbar({
         <div ref={componentMenuRef} className="relative flex items-center">
           <button
             onClick={() => {
+              setIsDividerMenuOpen(false);
               setIsComponentMenuOpen((open) => {
                 const nextOpen = !open;
                 setIsQuoteMenuOpen(
@@ -583,6 +584,64 @@ export default function EditorToolbar({
             ))}
           </div>
         </div>
+      </div>
+
+      <div
+        ref={dividerMenuRef}
+        aria-hidden={!isDividerMenuOpen}
+        style={{
+          left: dividerMenuPosition.left,
+          top: dividerMenuPosition.top,
+        }}
+        className={`absolute w-64 max-h-[70vh] overflow-y-auto rounded-xl border-2 border-pink-100 bg-white py-2 shadow-xl z-[110] ${
+          isDividerMenuOpen ? "" : "hidden"
+        }`}
+      >
+        <div className="px-3 pb-2 border-b border-pink-100">
+          <p className="text-xs font-medium text-purple-600">分割线样式</p>
+          <p className="mt-1 text-[11px] text-pink-400">
+            默认样式不变，可选择更细的装饰线
+          </p>
+        </div>
+        <button
+          onClick={insertDefaultDivider}
+          className="w-full px-3 py-2.5 text-left transition-colors hover:bg-pink-50"
+        >
+          <span className="flex items-center gap-3">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-xs font-bold text-purple-600">
+              默
+            </span>
+            <span>
+              <span className="block text-sm font-semibold text-purple-700">
+                默认样式
+              </span>
+              <span className="block text-xs text-pink-400">
+                保持当前主题原始分割线
+              </span>
+            </span>
+          </span>
+        </button>
+        {dividerStyleOptions.map((option) => (
+          <button
+            key={option.id}
+            onClick={() => insertDividerStyle(option.id)}
+            className="w-full px-3 py-2.5 text-left transition-colors hover:bg-pink-50"
+          >
+            <span className="flex items-center gap-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-50 text-xs font-bold text-purple-600">
+                {option.icon}
+              </span>
+              <span>
+                <span className="block text-sm font-semibold text-purple-700">
+                  {option.label}
+                </span>
+                <span className="block text-xs text-pink-400">
+                  {option.description}
+                </span>
+              </span>
+            </span>
+          </button>
+        ))}
       </div>
     </div>
   );

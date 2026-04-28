@@ -1,10 +1,10 @@
 export type LayoutComponentId =
-  | "section-heading"
-  | "card"
-  | "quote-box"
-  | "tip-box"
-  | "divider"
-  | "cta";
+  | "quote-highlight"
+  | "key-point"
+  | "step-list"
+  | "warning-tip"
+  | "summary-card"
+  | "follow-cta";
 
 export interface LayoutComponent {
   id: LayoutComponentId;
@@ -16,63 +16,90 @@ export interface LayoutComponent {
 
 const cleanSelectedText = (selectedText?: string) => selectedText?.trim() || "";
 
+const splitSelectedLines = (selectedText?: string) =>
+  cleanSelectedText(selectedText)
+    .split(/\r?\n/)
+    .map((line) => line.trim().replace(/^[-*]\s+/, "").replace(/^\d+\.\s+/, ""))
+    .filter(Boolean);
+
+const createStepListTemplate = (selectedText?: string) => {
+  const lines = splitSelectedLines(selectedText);
+  const steps =
+    lines.length > 0
+      ? lines
+      : ["第一步：写清楚要做什么", "第二步：补充关键细节", "第三步：给出行动建议"];
+
+  return steps.map((step, index) => `${index + 1}. ${step}`).join("\n");
+};
+
+const createSummaryTemplate = (selectedText?: string) => {
+  const firstBullet = cleanSelectedText(selectedText) || "这里写本文最重要的结论";
+
+  return `:::card
+### 本文小结
+- ${firstBullet}
+- 可以继续补充第二个重点
+- 最后写一个可执行的行动建议
+:::`;
+};
+
 export const layoutComponents: LayoutComponent[] = [
   {
-    id: "section-heading",
-    label: "小标题",
-    description: "插入二级标题",
-    icon: "H2",
+    id: "quote-highlight",
+    label: "金句引用",
+    description: "突出一句观点或引用",
+    icon: "“”",
     createTemplate: (selectedText) =>
-      `## ${cleanSelectedText(selectedText) || "小标题"}`,
+      `> ${cleanSelectedText(selectedText) || "这里写一句最想让读者记住的话"}
+>
+> -- 来源或作者`,
   },
   {
-    id: "card",
-    label: "卡片",
-    description: "重点内容或小结",
-    icon: "▣",
+    id: "key-point",
+    label: "核心观点",
+    description: "包装文章里的关键判断",
+    icon: "观",
     createTemplate: (selectedText) => `:::card
-### 卡片标题
-${cleanSelectedText(selectedText) || "卡片正文内容，适合放重点、步骤或小结。"}
+### 核心观点
+${cleanSelectedText(selectedText) || "这里写这段内容最重要的观点。"}
 :::`,
   },
   {
-    id: "quote-box",
-    label: "引用框",
-    description: "金句或引用来源",
-    icon: "❝",
-    createTemplate: (selectedText) => `> ${cleanSelectedText(selectedText) || "金句或引用内容"}
->
-> -- 引用来源`,
+    id: "step-list",
+    label: "步骤清单",
+    description: "把方法拆成可执行步骤",
+    icon: "1",
+    createTemplate: (selectedText) => createStepListTemplate(selectedText),
   },
   {
-    id: "tip-box",
-    label: "提示框",
-    description: "提示、注意事项",
+    id: "warning-tip",
+    label: "避坑提醒",
+    description: "提醒读者注意风险",
     icon: "!",
     createTemplate: (selectedText) => `:::tip
-提示标题
+避坑提醒
 
-${cleanSelectedText(selectedText) || "这里填写提示内容。"}
+${cleanSelectedText(selectedText) || "这里写容易忽略的注意事项。"}
 :::`,
   },
   {
-    id: "divider",
-    label: "分割线",
-    description: "分隔文章段落",
-    icon: "—",
-    createTemplate: () => "---",
+    id: "summary-card",
+    label: "总结复盘",
+    description: "收束文章重点",
+    icon: "结",
+    createTemplate: (selectedText) => createSummaryTemplate(selectedText),
   },
   {
-    id: "cta",
-    label: "CTA",
-    description: "行动引导按钮",
+    id: "follow-cta",
+    label: "关注引导",
+    description: "引导收藏、关注或行动",
     icon: "↗",
     createTemplate: (selectedText) => `:::cta
-行动标题
+觉得有用就收藏起来
 
-${cleanSelectedText(selectedText) || "这里填写引导文字。"}
+${cleanSelectedText(selectedText) || "下次需要写同类内容时，可以直接回来套用这套结构。"}
 
-[按钮文案](https://example.com)
+[关注我，继续看更多实用内容](#)
 :::`,
   },
 ];

@@ -223,32 +223,35 @@ export default function EditorToolbar({
           </span>
         </button>
 
-        {isComponentMenuOpen && (
-          <div className="absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-pink-100 z-[60] overflow-hidden">
-            {layoutComponents.map((component) => (
-              <button
-                key={component.id}
-                onClick={() => {
-                  onInsertComponent(component.id);
-                  setIsComponentMenuOpen(false);
-                }}
-                className="w-full px-3 py-2.5 text-left hover:bg-pink-50 flex items-center gap-3 transition-colors"
-              >
-                <span className="w-7 h-7 rounded-lg bg-pink-50 text-purple-500 flex items-center justify-center text-xs font-bold">
-                  {component.icon}
+        <div
+          aria-hidden={!isComponentMenuOpen}
+          className={`absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-pink-100 z-[60] overflow-hidden ${
+            isComponentMenuOpen ? "" : "hidden"
+          }`}
+        >
+          {layoutComponents.map((component) => (
+            <button
+              key={component.id}
+              onClick={() => {
+                onInsertComponent(component.id);
+                setIsComponentMenuOpen(false);
+              }}
+              className="w-full px-3 py-2.5 text-left hover:bg-pink-50 flex items-center gap-3 transition-colors"
+            >
+              <span className="w-7 h-7 rounded-lg bg-pink-50 text-purple-500 flex items-center justify-center text-xs font-bold">
+                {component.icon}
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm text-purple-700 font-medium">
+                  {component.label}
                 </span>
-                <span className="min-w-0">
-                  <span className="block text-sm text-purple-700 font-medium">
-                    {component.label}
-                  </span>
-                  <span className="block text-xs text-pink-400 truncate">
-                    {component.description}
-                  </span>
+                <span className="block text-xs text-pink-400 truncate">
+                  {component.description}
                 </span>
-              </button>
-            ))}
-          </div>
-        )}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

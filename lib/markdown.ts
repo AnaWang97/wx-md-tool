@@ -608,10 +608,11 @@ function renderLayoutComponentBlocks(
 
       if (type === "quote-center") {
         const style = `margin: 30px 0; padding: 24px 18px; text-align: center; border-top: 1px solid ${colorToRgba(primaryColor, 0.28)}; border-bottom: 1px solid ${colorToRgba(primaryColor, 0.28)};`;
-        const markStyle = `margin: 0 auto 12px; color: ${primaryColor}; font-size: 24px; line-height: 1; font-weight: 700;`;
+        const openMarkStyle = `margin: 0 0 8px; text-align: left; color: ${primaryColor}; font-size: 26px; line-height: 1; font-weight: 700;`;
+        const closeMarkStyle = `margin: 8px 0 0; text-align: right; color: ${primaryColor}; font-size: 26px; line-height: 1; font-weight: 700;`;
         const textStyle = `margin: 0 auto; max-width: 92%; color: ${primaryColor}; font-size: 18px; line-height: 1.9; font-weight: 700;`;
 
-        return `<section data-layout-component="quote-center" style="${style}"><p style="${markStyle}">“ ”</p><p style="${textStyle}">${quoteHtml}</p></section>`;
+        return `<section data-layout-component="quote-center" style="${style}"><p style="${openMarkStyle}">“</p><p style="${textStyle}">${quoteHtml}</p><p style="${closeMarkStyle}">”</p></section>`;
       }
 
       if (type === "quote-side") {

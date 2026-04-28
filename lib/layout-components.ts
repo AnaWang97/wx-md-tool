@@ -1,5 +1,7 @@
 export type LayoutComponentId =
-  | "quote-highlight"
+  | "quote-card"
+  | "quote-center"
+  | "quote-side"
   | "key-point"
   | "step-list"
   | "warning-tip"
@@ -43,16 +45,34 @@ const createSummaryTemplate = (selectedText?: string) => {
 :::`;
 };
 
+const createQuoteTemplate = (
+  type: "quote-card" | "quote-center" | "quote-side",
+  selectedText?: string
+) => `:::${type}
+${cleanSelectedText(selectedText) || "这里写一句最想让读者记住的话"}
+:::`;
+
 export const layoutComponents: LayoutComponent[] = [
   {
-    id: "quote-highlight",
-    label: "金句引用",
-    description: "选一句话变成金句引用",
-    icon: "“”",
-    createTemplate: (selectedText) =>
-      `> ${cleanSelectedText(selectedText) || "这里写一句最想让读者记住的话"}
->
-> -- 来源或作者`,
+    id: "quote-card",
+    label: "金句卡片",
+    description: "选一句话变精致卡片",
+    icon: "句",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-card", selectedText),
+  },
+  {
+    id: "quote-center",
+    label: "居中金句",
+    description: "选一句话变留白展示",
+    icon: "中",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-center", selectedText),
+  },
+  {
+    id: "quote-side",
+    label: "侧栏金句",
+    description: "选一句话变左线强调",
+    icon: "引",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-side", selectedText),
   },
   {
     id: "key-point",

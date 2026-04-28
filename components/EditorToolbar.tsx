@@ -228,7 +228,7 @@ export default function EditorToolbar({
 
           <div
             aria-hidden={!isComponentMenuOpen}
-            className={`absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-xl border-2 border-pink-100 z-[80] overflow-hidden ${
+            className={`absolute right-0 top-full mt-2 w-60 max-h-[70vh] overflow-y-auto bg-white rounded-xl shadow-xl border-2 border-pink-100 z-[80] ${
               isComponentMenuOpen ? "" : "hidden"
             }`}
           >

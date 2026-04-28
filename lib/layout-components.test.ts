@@ -6,9 +6,11 @@ import {
 } from "./layout-components";
 
 describe("layoutComponents", () => {
-  it("defines the six scene components in menu order", () => {
+  it("defines scene components with three quote showcase styles", () => {
     expect(layoutComponents.map((item) => item.id)).toEqual([
-      "quote-highlight",
+      "quote-card",
+      "quote-center",
+      "quote-side",
       "key-point",
       "step-list",
       "warning-tip",
@@ -17,13 +19,27 @@ describe("layoutComponents", () => {
     ]);
 
     expect(layoutComponents.map((item) => item.label)).toEqual([
-      "金句引用",
+      "金句卡片",
+      "居中金句",
+      "侧栏金句",
       "核心观点",
       "步骤清单",
       "避坑提醒",
       "总结复盘",
       "关注引导",
     ]);
+  });
+
+  it("creates distinct quote showcase templates with selected text", () => {
+    expect(createLayoutComponentTemplate("quote-card", "先让读者扫得懂")).toContain(
+      ":::quote-card\n先让读者扫得懂\n:::"
+    );
+    expect(createLayoutComponentTemplate("quote-center", "先让读者扫得懂")).toContain(
+      ":::quote-center\n先让读者扫得懂\n:::"
+    );
+    expect(createLayoutComponentTemplate("quote-side", "先让读者扫得懂")).toContain(
+      ":::quote-side\n先让读者扫得懂\n:::"
+    );
   });
 
   it("creates a key point card with selected text as body content", () => {
@@ -56,7 +72,9 @@ describe("layoutComponents", () => {
 
   it("creates readable default templates for every component", () => {
     const ids: LayoutComponentId[] = [
-      "quote-highlight",
+      "quote-card",
+      "quote-center",
+      "quote-side",
       "key-point",
       "step-list",
       "warning-tip",

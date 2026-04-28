@@ -34,6 +34,19 @@ describe("layout component Markdown blocks", () => {
     expect(html).toContain("了解更多");
   });
 
+  it("renders three quote showcase block styles", () => {
+    const cardHtml = parseMarkdown(":::quote-card\n先让读者扫得懂\n:::", themes[0]);
+    const centerHtml = parseMarkdown(":::quote-center\n先让读者扫得懂\n:::", themes[0]);
+    const sideHtml = parseMarkdown(":::quote-side\n先让读者扫得懂\n:::", themes[0]);
+
+    expect(cardHtml).toContain('data-layout-component="quote-card"');
+    expect(centerHtml).toContain('data-layout-component="quote-center"');
+    expect(sideHtml).toContain('data-layout-component="quote-side"');
+    expect(cardHtml).toContain("先让读者扫得懂");
+    expect(centerHtml).toContain("text-align: center");
+    expect(sideHtml).toContain("border-left");
+  });
+
   it("uses custom primary color when custom styles are active", () => {
     const html = parseMarkdown(":::card\n卡片内容\n:::", themes[0], {
       primaryColor: "#ec4899",

@@ -576,6 +576,14 @@ function stripOuterParagraph(html: string): string {
   return html.trim().replace(/^<p([^>]*)>([\s\S]*)<\/p>$/i, "<span$1>$2</span>");
 }
 
+type LayoutBlockType =
+  | "card"
+  | "tip"
+  | "cta"
+  | "quote-card"
+  | "quote-center"
+  | "quote-side";
+
 function renderLayoutComponentBlocks(
   markdown: string,
   theme: Theme,
@@ -585,9 +593,33 @@ function renderLayoutComponentBlocks(
   const lightColor = colorToRgba(primaryColor, 0.1);
 
   return markdown.replace(
-    /^:::(card|tip|cta)[ \t]*\n([\s\S]*?)\n:::[ \t]*$/gm,
-    (_match, type: "card" | "tip" | "cta", body: string) => {
+    /^:::(card|tip|cta|quote-card|quote-center|quote-side)[ \t]*\n([\s\S]*?)\n:::[ \t]*$/gm,
+    (_match, type: LayoutBlockType, body: string) => {
       const trimmedBody = body.trim();
+      const quoteHtml = stripOuterParagraph(marked.parse(trimmedBody) as string);
+
+      if (type === "quote-card") {
+        const style = `margin: 26px 0; padding: 22px 24px; border-radius: 14px; background: linear-gradient(135deg, ${lightColor}, #fff); border: 1px solid ${colorToRgba(primaryColor, 0.24)}; box-shadow: 0 6px 18px ${colorToRgba(primaryColor, 0.1)};`;
+        const markStyle = `margin: 0 0 10px; color: ${primaryColor}; font-size: 28px; line-height: 1; font-weight: 700;`;
+        const textStyle = `margin: 0; color: #3f3f3f; font-size: 17px; line-height: 1.85; font-weight: 600;`;
+
+        return `<section data-layout-component="quote-card" style="${style}"><p style="${markStyle}">“</p><p style="${textStyle}">${quoteHtml}</p></section>`;
+      }
+
+      if (type === "quote-center") {
+        const style = `margin: 30px 0; padding: 24px 18px; text-align: center; border-top: 1px solid ${colorToRgba(primaryColor, 0.28)}; border-bottom: 1px solid ${colorToRgba(primaryColor, 0.28)};`;
+        const markStyle = `margin: 0 auto 12px; color: ${primaryColor}; font-size: 24px; line-height: 1; font-weight: 700;`;
+        const textStyle = `margin: 0 auto; max-width: 92%; color: ${primaryColor}; font-size: 18px; line-height: 1.9; font-weight: 700;`;
+
+        return `<section data-layout-component="quote-center" style="${style}"><p style="${markStyle}">“ ”</p><p style="${textStyle}">${quoteHtml}</p></section>`;
+      }
+
+      if (type === "quote-side") {
+        const style = `margin: 24px 0; padding: 14px 0 14px 18px; border-left: 5px solid ${primaryColor}; background: ${lightColor};`;
+        const textStyle = `margin: 0; color: #4b4450; font-size: 16px; line-height: 1.85; font-weight: 600;`;
+
+        return `<section data-layout-component="quote-side" style="${style}"><p style="${textStyle}">${quoteHtml}</p></section>`;
+      }
 
       if (type === "card") {
         const innerHtml = marked.parse(trimmedBody) as string;

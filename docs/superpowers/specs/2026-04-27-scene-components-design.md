@@ -10,7 +10,9 @@ The current component menu mainly inserts neutral formatting blocks such as "car
 
 The upgraded menu should speak in publishing scenarios:
 
-- `金句引用`: turn a sentence into a quote-style highlight.
+- `金句卡片`: turn a sentence into a polished quote card.
+- `居中金句`: turn a sentence into a centered showcase quote.
+- `侧栏金句`: turn a sentence into a left-accent quote block.
 - `核心观点`: turn selected text into a key opinion card.
 - `步骤清单`: turn selected lines into numbered steps, or insert a three-step starter.
 - `避坑提醒`: turn selected text into a warning/tip block.
@@ -35,7 +37,9 @@ Change the mental model of the dropdown:
 
 The templates should favor WeChat article writing language over generic placeholders:
 
-- `金句引用`: Markdown blockquote with selected text as the quote and an editable source line.
+- `金句卡片`: `:::quote-card` with selected text as a polished quote card.
+- `居中金句`: `:::quote-center` with selected text as a centered showcase quote.
+- `侧栏金句`: `:::quote-side` with selected text as a compact left-accent quote.
 - `核心观点`: `:::card` with title `核心观点` and selected text as the body.
 - `步骤清单`: plain Markdown numbered list. If the selected text has multiple non-empty lines, each line becomes one step. Otherwise insert three editable steps.
 - `避坑提醒`: `:::tip` with title `避坑提醒` and selected text as the body.

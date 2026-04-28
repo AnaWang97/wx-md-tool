@@ -232,6 +232,11 @@ export default function EditorToolbar({
               isComponentMenuOpen ? "" : "hidden"
             }`}
           >
+            <div className="px-3 py-2 border-b border-pink-100 bg-pink-50/70">
+              <p className="text-[11px] leading-relaxed text-purple-500">
+                先选中文字，再点组件；未选择时插入模板
+              </p>
+            </div>
             {layoutComponents.map((component) => (
               <button
                 key={component.id}

@@ -47,7 +47,7 @@ export const layoutComponents: LayoutComponent[] = [
   {
     id: "quote-highlight",
     label: "金句引用",
-    description: "突出一句观点或引用",
+    description: "选一句话变成金句引用",
     icon: "“”",
     createTemplate: (selectedText) =>
       `> ${cleanSelectedText(selectedText) || "这里写一句最想让读者记住的话"}
@@ -57,7 +57,7 @@ export const layoutComponents: LayoutComponent[] = [
   {
     id: "key-point",
     label: "核心观点",
-    description: "包装文章里的关键判断",
+    description: "选一段文字变成观点卡",
     icon: "观",
     createTemplate: (selectedText) => `:::card
 ### 核心观点
@@ -67,14 +67,14 @@ ${cleanSelectedText(selectedText) || "这里写这段内容最重要的观点。
   {
     id: "step-list",
     label: "步骤清单",
-    description: "把方法拆成可执行步骤",
+    description: "选多行文字变编号步骤",
     icon: "1",
     createTemplate: (selectedText) => createStepListTemplate(selectedText),
   },
   {
     id: "warning-tip",
     label: "避坑提醒",
-    description: "提醒读者注意风险",
+    description: "选注意事项变提醒框",
     icon: "!",
     createTemplate: (selectedText) => `:::tip
 避坑提醒
@@ -85,14 +85,14 @@ ${cleanSelectedText(selectedText) || "这里写容易忽略的注意事项。"}
   {
     id: "summary-card",
     label: "总结复盘",
-    description: "收束文章重点",
+    description: "选结论变小结卡片",
     icon: "结",
     createTemplate: (selectedText) => createSummaryTemplate(selectedText),
   },
   {
     id: "follow-cta",
     label: "关注引导",
-    description: "引导收藏、关注或行动",
+    description: "选一句话变行动引导",
     icon: "↗",
     createTemplate: (selectedText) => `:::cta
 觉得有用就收藏起来

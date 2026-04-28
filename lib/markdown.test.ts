@@ -21,4 +21,17 @@ describe("parseMarkdown", () => {
     expect(html).not.toContain("aria-hidden=\"true\"");
     expect(html).toContain(themes[0].preview);
   });
+
+  it("renders a horizontal rule after a bold sentence without needing a blank line", () => {
+    const html = parseMarkdown(
+      "**我的答案是：不一定。**\n---\n## 下一节",
+      themes[0]
+    );
+
+    expect(html).toContain("<strong");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("下一节");
+    expect(html).not.toContain(">---<");
+  });
 });

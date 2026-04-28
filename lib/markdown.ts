@@ -444,11 +444,70 @@ export function createMarkdownRenderer(
 }
 
 // 预处理 Markdown，修复常见的格式问题
+function normalizeHorizontalRuleSpacing(markdown: string): string {
+  const lines = markdown.split("\n");
+  const result: string[] = [];
+  let inFence = false;
+  let fenceMarker: "`" | "~" | null = null;
+  let fenceLength = 0;
+
+  lines.forEach((line, index) => {
+    const fenceMatch = line.match(/^[ \t]{0,3}(`{3,}|~{3,})/);
+
+    if (fenceMatch) {
+      const marker = fenceMatch[1][0] as "`" | "~";
+
+      if (!inFence) {
+        inFence = true;
+        fenceMarker = marker;
+        fenceLength = fenceMatch[1].length;
+      } else if (
+        marker === fenceMarker &&
+        fenceMatch[1].length >= fenceLength
+      ) {
+        inFence = false;
+        fenceMarker = null;
+        fenceLength = 0;
+      }
+
+      result.push(line);
+      return;
+    }
+
+    const isHorizontalRule =
+      !inFence && /^[ \t]{0,3}(?:-{3,}|\*{3,}|_{3,})[ \t]*$/.test(line);
+    const previousLine = result[result.length - 1];
+    const nextLine = lines[index + 1];
+
+    if (
+      isHorizontalRule &&
+      previousLine !== undefined &&
+      previousLine.trim() !== ""
+    ) {
+      result.push("");
+    }
+
+    result.push(line);
+
+    if (
+      isHorizontalRule &&
+      nextLine !== undefined &&
+      nextLine.trim() !== ""
+    ) {
+      result.push("");
+    }
+  });
+
+  return result.join("\n");
+}
+
 function preprocessMarkdown(markdown: string): string {
   let result = markdown;
 
   // 移除零宽字符和其他不可见字符（保留换行和普通空格）
   result = result.replace(/[\u200B-\u200D\uFEFF]/g, '');
+
+  result = normalizeHorizontalRuleSpacing(result);
 
   // ========== 列表处理（在加粗处理之前） ==========
 

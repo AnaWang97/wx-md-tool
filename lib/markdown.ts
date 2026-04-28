@@ -466,6 +466,8 @@ const boldTrailingWhitespacePattern = new RegExp(
   "gu"
 );
 const dashVariantPattern = /[\u2010-\u2015\u2212\ufe58\ufe63\uff0d]/g;
+const splitFeishuImagePattern =
+  /!\[([^\]\n]*)\]\s*\(\s*(https?:\/\/[^\s)]*feishu\.cn\/space\/api\/box\/stream\/download\/[^\s)]*(?:\s+[^\s)]*)*)\s*\)/gi;
 
 function normalizeHorizontalRuleMarker(line: string): string | null {
   if (!horizontalRulePattern.test(line)) return null;
@@ -548,6 +550,13 @@ function normalizeHorizontalRuleSpacing(markdown: string): string {
   return result.join("\n");
 }
 
+function normalizeSplitFeishuImageLinks(markdown: string): string {
+  return markdown.replace(splitFeishuImagePattern, (_match, alt: string, rawUrl: string) => {
+    const url = rawUrl.replace(/\s+/g, "");
+    return `![${alt.trim()}](${url})`;
+  });
+}
+
 function preprocessMarkdown(markdown: string): string {
   let result = markdown;
 
@@ -556,6 +565,8 @@ function preprocessMarkdown(markdown: string): string {
 
   // 移除零宽字符和其他不可见字符（保留换行和普通空格）
   result = result.replace(/[\u200B-\u200D\uFEFF]/g, '');
+
+  result = normalizeSplitFeishuImageLinks(result);
 
   result = normalizeHorizontalRuleSpacing(result);
 
@@ -763,6 +774,14 @@ function renderDividerBlocks(
 function renderDataUrlImageMarkdown(markdown: string, imageStyle: string): string {
   return markdown.replace(
     /!\[([^\]]*)\]\(<?(data:image\/[a-z0-9.+-]+;base64,[^)>\s]+)>?\)/gi,
+    (_match, alt: string, src: string) =>
+      `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="${imageStyle}" />`
+  );
+}
+
+function renderFeishuImageMarkdown(markdown: string, imageStyle: string): string {
+  return markdown.replace(
+    /!\[([^\]]*)\]\(<?(https?:\/\/[^\s)]*feishu\.cn\/space\/api\/box\/stream\/download\/[^)>\s]+)>?\)/gi,
     (_match, alt: string, src: string) =>
       `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="${imageStyle}" />`
   );
@@ -1002,8 +1021,12 @@ export function parseMarkdown(
     markdownWithDividerBlocks,
     styles.img
   );
-  const markdownWithLayoutComponents = renderLayoutComponentBlocks(
+  const markdownWithFeishuImages = renderFeishuImageMarkdown(
     markdownWithDataUrlImages,
+    styles.img
+  );
+  const markdownWithLayoutComponents = renderLayoutComponentBlocks(
+    markdownWithFeishuImages,
     theme,
     customStyles
   );

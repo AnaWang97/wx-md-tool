@@ -58,6 +58,19 @@ describe("parseMarkdown", () => {
     expect(html).toContain('alt="图片1"');
   });
 
+  it("renders Feishu image links even when pasted with a line break before the URL", () => {
+    const html = parseMarkdown(
+      "![图片1]\n(https://my.feishu.cn/space/api/box/stream/download/asynccode/?\ncode=abc123)",
+      themes[0]
+    );
+
+    expect(html).toContain(
+      'src="https://my.feishu.cn/space/api/box/stream/download/asynccode/?code=abc123"'
+    );
+    expect(html).toContain('alt="图片1"');
+    expect(html).not.toContain("![图片1]");
+  });
+
   it("renders theme-following divider blocks with the active primary color", () => {
     const html = parseMarkdown(":::divider-heart-dot\n:::", themes[0], {
       primaryColor: "#ec4899",

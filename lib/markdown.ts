@@ -600,10 +600,11 @@ function renderLayoutComponentBlocks(
 
       if (type === "quote-card") {
         const style = `margin: 26px 0; padding: 22px 24px; border-radius: 14px; background: linear-gradient(135deg, ${lightColor}, #fff); border: 1px solid ${colorToRgba(primaryColor, 0.24)}; box-shadow: 0 6px 18px ${colorToRgba(primaryColor, 0.1)};`;
-        const markStyle = `margin: 0 0 10px; color: ${primaryColor}; font-size: 28px; line-height: 1; font-weight: 700;`;
-        const textStyle = `margin: 0; color: #3f3f3f; font-size: 17px; line-height: 1.85; font-weight: 600;`;
+        const openMarkStyle = `margin: 0 0 8px; text-align: left; color: ${primaryColor}; font-size: 22px; line-height: 1; font-weight: 700;`;
+        const closeMarkStyle = `margin: 8px 0 0; text-align: right; color: ${primaryColor}; font-size: 22px; line-height: 1; font-weight: 700;`;
+        const textStyle = `margin: 0; color: #3f3f3f; font-size: inherit; line-height: 1.85; font-weight: 600;`;
 
-        return `<section data-layout-component="quote-card" style="${style}"><p style="${markStyle}">“</p><p style="${textStyle}">${quoteHtml}</p></section>`;
+        return `<section data-layout-component="quote-card" style="${style}"><p style="${openMarkStyle}">“</p><p style="${textStyle}">${quoteHtml}</p><p style="${closeMarkStyle}">”</p></section>`;
       }
 
       if (type === "quote-center") {

@@ -43,6 +43,10 @@ describe("layout component Markdown blocks", () => {
     expect(centerHtml).toContain('data-layout-component="quote-center"');
     expect(sideHtml).toContain('data-layout-component="quote-side"');
     expect(cardHtml).toContain("先让读者扫得懂");
+    expect(cardHtml).toContain("font-size: inherit");
+    expect(cardHtml).toContain("text-align: left");
+    expect(cardHtml).toContain("text-align: right");
+    expect(cardHtml).not.toContain("font-size: 17px");
     expect(centerHtml).toContain("text-align: center");
     expect(centerHtml).toContain("text-align: left");
     expect(centerHtml).toContain("text-align: right");

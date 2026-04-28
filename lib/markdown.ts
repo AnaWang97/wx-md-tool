@@ -455,6 +455,18 @@ const inlineHorizontalRulePattern = new RegExp(
   "u"
 );
 const horizontalWhitespacePattern = new RegExp(horizontalWhitespace, "gu");
+const boldBothSidesWhitespacePattern = new RegExp(
+  `\\*\\*${horizontalWhitespace}+([^*]+?)${horizontalWhitespace}+\\*\\*`,
+  "gu"
+);
+const boldLeadingWhitespacePattern = new RegExp(
+  `\\*\\*${horizontalWhitespace}+([^*]+?)\\*\\*`,
+  "gu"
+);
+const boldTrailingWhitespacePattern = new RegExp(
+  `\\*\\*([^*]+?)${horizontalWhitespace}+\\*\\*`,
+  "gu"
+);
 const dashVariantPattern = /[\u2010-\u2015\u2212\ufe58\ufe63\uff0d]/g;
 
 function normalizeHorizontalRuleMarker(line: string): string | null {
@@ -541,8 +553,8 @@ function normalizeHorizontalRuleSpacing(markdown: string): string {
 function preprocessMarkdown(markdown: string): string {
   let result = markdown;
 
-  // 统一换行符，避免从富文本或 Windows 文档粘贴来的 \r 影响块级语法识别
-  result = result.replace(/\r\n?/g, "\n");
+  // 统一换行符，避免从富文本、Windows 文档或智能体输出粘贴来的特殊行分隔符影响块级语法识别
+  result = result.replace(/\r\n?|\u0085|\u2028|\u2029/g, "\n");
 
   // 移除零宽字符和其他不可见字符（保留换行和普通空格）
   result = result.replace(/[\u200B-\u200D\uFEFF]/g, '');
@@ -586,19 +598,19 @@ function preprocessMarkdown(markdown: string): string {
 
   // 修复加粗语法：处理 ** 和文字之间的各种空白字符
   // 1. 两侧都有空格：`** 文字 **` -> `**文字**`
-  result = result.replace(/\*\*[ \t]+([^*]+?)[ \t]+\*\*/g, '**$1**');
+  result = result.replace(boldBothSidesWhitespacePattern, '**$1**');
 
   // 2. 左侧有空格：`** 文字**` -> `**文字**`
-  result = result.replace(/\*\*[ \t]+([^*]+?)\*\*/g, '**$1**');
+  result = result.replace(boldLeadingWhitespacePattern, '**$1**');
 
   // 3. 右侧有空格：`**文字 **` -> `**文字**`
-  result = result.replace(/\*\*([^*]+?)[ \t]+\*\*/g, '**$1**');
+  result = result.replace(boldTrailingWhitespacePattern, '**$1**');
 
   // 4. 修复连续星号问题：`****文字****` -> `**文字**`
   result = result.replace(/\*{3,}([^*]+?)\*{3,}/g, '**$1**');
 
-  // 5. 处理星号后紧跟换行的情况
-  result = result.replace(/\*\*\n+([^*]+?)\n*\*\*/g, '**$1**');
+  // 5. 处理整行独立的加粗标记，避免从一个已闭合的 ** 跨段落吃到后面的 **。
+  result = result.replace(/(^|\n)\*\*[ \t]*\n([^\n*]+?)\n[ \t]*\*\*(?=\n|$)/g, '$1**$2**');
 
   return result;
 }

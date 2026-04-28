@@ -86,4 +86,71 @@ describe("parseMarkdown", () => {
     expect(html).toContain("下一节");
     expect(html).not.toContain("---");
   });
+
+  it("renders a horizontal rule in the article snippet after a bold answer", () => {
+    const html = parseMarkdown(
+      `但今天的问题是：当模型本身已经足够聪明，甚至能够理解复杂目标、使用工具、检查结果、完成多步骤任务时，我们还要不要继续用过去那种“事无巨细地控制它”的方式？
+
+**我的答案是：不一定。**
+
+---
+
+这个问题还是没有被解决。`,
+      themes[0]
+    );
+
+    expect(html).toContain("但今天的问题是");
+    expect(html).toContain("<strong");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("这个问题还是没有被解决。");
+    expect(html).not.toContain("不一定。</strong> ---");
+  });
+
+  it("normalizes unicode line separators around horizontal rules", () => {
+    const html = parseMarkdown(
+      "但今天的问题是：当模型本身已经足够聪明。\u2028\u2028**我的答案是：不一定。 **\u2028\u2028---\u2028\u2028## 二、提示词太细",
+      themes[0]
+    );
+
+    expect(html).toContain("<strong");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("二、提示词太细");
+    expect(html).not.toContain("不一定。</strong> ---");
+  });
+
+  it("keeps a previous inline bold sentence from consuming a later horizontal rule", () => {
+    const html = parseMarkdown(
+      `当模型能力弱的时候，我们需要靠详细提示词补足它的能力；但当模型能力变强以后，我们更需要做的不是继续加限制，而是让它理解你的**真实目标、真实背景、真实偏好和真实素材**。
+
+但今天的问题是：当模型本身已经足够聪明，甚至能够理解复杂目标、使用工具、检查结果、完成多步骤任务时，我们还要不要继续用过去那种“事无巨细地控制它”的方式？
+
+**我的答案是：不一定。 **
+
+---
+
+## 二、提示词太细，为什么会限制模型？`,
+      themes[0]
+    );
+
+    expect(html).toContain("真实目标、真实背景、真实偏好和真实素材");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("二、提示词太细，为什么会限制模型？");
+    expect(html).not.toContain("---");
+  });
+
+  it("normalizes invisible trailing spaces inside bold before a horizontal rule", () => {
+    const html = parseMarkdown(
+      `**我的答案是：不一定。\u00a0**\n\n---\n\n## 一、以前我们为什么迷信“长提示词”？\n\n当模型能力弱的时候，我们需要靠详细提示词补足它的能力；但当模型能力变强以后，我们更需要做的不是继续加限制，而是让它理解你的**真实目标、真实背景、真实偏好和真实素材**。`,
+      themes[0]
+    );
+
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("一、以前我们为什么迷信");
+    expect(html).toContain("真实目标、真实背景、真实偏好和真实素材");
+    expect(html).not.toContain("---");
+  });
 });

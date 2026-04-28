@@ -760,6 +760,14 @@ function renderDividerBlocks(
   );
 }
 
+function renderDataUrlImageMarkdown(markdown: string, imageStyle: string): string {
+  return markdown.replace(
+    /!\[([^\]]*)\]\(<?(data:image\/[a-z0-9.+-]+;base64,[^)>\s]+)>?\)/gi,
+    (_match, alt: string, src: string) =>
+      `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="${imageStyle}" />`
+  );
+}
+
 type LayoutBlockType =
   | "card"
   | "tip"
@@ -990,8 +998,12 @@ export function parseMarkdown(
     theme,
     customStyles
   );
-  const markdownWithLayoutComponents = renderLayoutComponentBlocks(
+  const markdownWithDataUrlImages = renderDataUrlImageMarkdown(
     markdownWithDividerBlocks,
+    styles.img
+  );
+  const markdownWithLayoutComponents = renderLayoutComponentBlocks(
+    markdownWithDataUrlImages,
     theme,
     customStyles
   );

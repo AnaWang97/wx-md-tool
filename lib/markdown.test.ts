@@ -51,6 +51,13 @@ describe("parseMarkdown", () => {
     expect(html).not.toContain("<hr");
   });
 
+  it("renders pasted data-url images in the preview", () => {
+    const html = parseMarkdown("![图片1](data:image/png;base64,abc)", themes[0]);
+
+    expect(html).toContain('src="data:image/png;base64,abc"');
+    expect(html).toContain('alt="图片1"');
+  });
+
   it("renders theme-following divider blocks with the active primary color", () => {
     const html = parseMarkdown(":::divider-heart-dot\n:::", themes[0], {
       primaryColor: "#ec4899",

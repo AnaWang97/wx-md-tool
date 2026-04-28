@@ -2,10 +2,15 @@
 
 import { useRef, useEffect, useCallback, useMemo, useState } from "react";
 import {
+  createMarkdownImage,
   htmlToMarkdown,
   hasHtmlContent,
   getHtmlFromClipboard,
 } from "@/lib/html-to-markdown";
+import {
+  getClipboardImageFiles,
+  readImageFilesAsDataUrls,
+} from "@/lib/clipboard-images";
 import { getRestoredTextareaScrollTop } from "@/lib/editor-scroll";
 import { toggleTextAffix } from "@/lib/markdown-formatting";
 import {
@@ -88,38 +93,58 @@ export default function Editor({
 
   // 处理粘贴事件 - 智能识别富文本
   const handlePaste = useCallback(
-    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
       const clipboardData = e.clipboardData;
+      const imageFiles = getClipboardImageFiles(clipboardData);
+      const hasRichHtml = hasHtmlContent(clipboardData);
+      const html = hasRichHtml ? getHtmlFromClipboard(clipboardData) : "";
+      const shouldConvertHtml =
+        html &&
+        /<(p|div|h[1-6]|strong|b|em|i|ul|ol|li|img|table|blockquote|pre|code)\b/i.test(
+          html
+        );
 
       // 检查是否有 HTML 内容（来自飞书等富文本编辑器）
-      if (hasHtmlContent(clipboardData)) {
-        const html = getHtmlFromClipboard(clipboardData);
+      if (!shouldConvertHtml && imageFiles.length === 0) {
+        return;
+      }
 
-        // 检查是否是有意义的 HTML（不只是纯文本的 HTML 包装）
-        if (html && html.includes("<") && (html.includes("<p") || html.includes("<div") || html.includes("<h") || html.includes("<strong") || html.includes("<em") || html.includes("<ul") || html.includes("<ol") || html.includes("<img"))) {
-          e.preventDefault();
+      e.preventDefault();
 
-          const { markdown } = htmlToMarkdown(html);
-
-          // 获取当前光标位置
-          const textarea = textareaRef.current;
-          if (textarea) {
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const newValue =
-              value.substring(0, start) + markdown + value.substring(end);
-            onChange(newValue);
-
-            // 设置光标位置到粘贴内容之后
-            setTimeout(() => {
-              textarea.selectionStart = textarea.selectionEnd =
-                start + markdown.length;
-              textarea.focus();
-            }, 0);
-          } else {
-            onChange(value + markdown);
-          }
+      const textarea = textareaRef.current;
+      const start = textarea?.selectionStart ?? value.length;
+      const end = textarea?.selectionEnd ?? value.length;
+      let imageDataUrls: string[] = [];
+      if (imageFiles.length > 0) {
+        try {
+          imageDataUrls = await readImageFilesAsDataUrls(imageFiles);
+        } catch {
+          imageDataUrls = [];
         }
+      }
+
+      const { markdown } = shouldConvertHtml
+        ? htmlToMarkdown(html, { fallbackImageSources: imageDataUrls })
+        : {
+            markdown: imageDataUrls
+              .map((src, index) => createMarkdownImage(src, "", index + 1))
+              .join(""),
+          };
+
+      // 获取当前光标位置
+      if (textarea) {
+        const newValue =
+          value.substring(0, start) + markdown + value.substring(end);
+        onChange(newValue);
+
+        // 设置光标位置到粘贴内容之后
+        setTimeout(() => {
+          textarea.selectionStart = textarea.selectionEnd =
+            start + markdown.length;
+          textarea.focus();
+        }, 0);
+      } else {
+        onChange(value + markdown);
       }
     },
     [value, onChange]

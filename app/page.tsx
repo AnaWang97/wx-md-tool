@@ -148,8 +148,12 @@ export default function Home() {
     }
 
     saveTimeoutRef.current = setTimeout(() => {
-      localStorage.setItem("wx-md-tool-content", markdown);
-      setSaveStatus("saved");
+      try {
+        localStorage.setItem("wx-md-tool-content", markdown);
+        setSaveStatus("saved");
+      } catch {
+        setSaveStatus("");
+      }
       // 2秒后隐藏保存状态
       setTimeout(() => setSaveStatus(""), 2000);
     }, 1000);

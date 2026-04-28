@@ -5,8 +5,57 @@ export interface ConvertResult {
   markdown: string;
 }
 
-export function htmlToMarkdown(html: string): ConvertResult {
+export interface HtmlToMarkdownOptions {
+  fallbackImageSources?: string[];
+}
+
+export function resolveImageSource(
+  src: string,
+  fallbackImageSources: string[] = []
+): string {
+  const trimmedSrc = src.trim();
+
+  if (
+    /^https?:\/\//i.test(trimmedSrc) ||
+    /^data:image\/[a-z0-9.+-]+;base64,/i.test(trimmedSrc)
+  ) {
+    return trimmedSrc;
+  }
+
+  return fallbackImageSources[0] || "";
+}
+
+export function createMarkdownImage(
+  src: string,
+  alt: string,
+  imageIndex: number
+): string {
+  return `\n![${alt.trim() || `图片${imageIndex}`}](${src})\n\n`;
+}
+
+function getImageSource(element: HTMLElement): string {
+  const directSrc =
+    element.getAttribute("src") ||
+    element.getAttribute("data-src") ||
+    element.getAttribute("data-original") ||
+    element.getAttribute("data-url") ||
+    "";
+
+  if (directSrc.trim()) {
+    return directSrc;
+  }
+
+  const srcset = element.getAttribute("srcset") || "";
+  return srcset.split(",")[0]?.trim().split(/\s+/)[0] || "";
+}
+
+export function htmlToMarkdown(
+  html: string,
+  options: HtmlToMarkdownOptions = {}
+): ConvertResult {
   let imageIndex = 0;
+  let fallbackImageIndex = 0;
+  const fallbackImageSources = options.fallbackImageSources || [];
 
   // 创建一个临时 DOM 元素来解析 HTML
   const parser = new DOMParser();
@@ -89,12 +138,20 @@ export function htmlToMarkdown(html: string): ConvertResult {
 
       // 图片 - 提取图片 URL
       case "img":
-        const src = element.getAttribute("src") || "";
+        const src = getImageSource(element);
         const alt = element.getAttribute("alt") || "";
         imageIndex++;
+        const fallbackImageSource = fallbackImageSources[fallbackImageIndex];
+        const resolvedSrc = resolveImageSource(
+          src,
+          fallbackImageSource ? [fallbackImageSource] : []
+        );
 
-        if (src && (src.startsWith("http://") || src.startsWith("https://"))) {
-          return `\n![${alt || `图片${imageIndex}`}](${src})\n\n`;
+        if (resolvedSrc) {
+          if (resolvedSrc === fallbackImageSource) {
+            fallbackImageIndex++;
+          }
+          return createMarkdownImage(resolvedSrc, alt, imageIndex);
         }
         return `\n[图片${imageIndex}]\n\n`;
 
@@ -169,6 +226,16 @@ export function htmlToMarkdown(html: string): ConvertResult {
   }
 
   let markdown = processNode(doc.body);
+
+  const unusedFallbackImages = fallbackImageSources
+    .slice(fallbackImageIndex)
+    .map((src) => {
+      imageIndex++;
+      return createMarkdownImage(src, "", imageIndex);
+    })
+    .join("");
+
+  markdown += unusedFallbackImages;
 
   // 清理多余的空行
   markdown = markdown

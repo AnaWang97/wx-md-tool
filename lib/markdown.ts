@@ -588,7 +588,11 @@ type LayoutBlockType =
   | "quote-frame"
   | "quote-brush"
   | "quote-center"
-  | "quote-side";
+  | "quote-side"
+  | "align-left"
+  | "align-center"
+  | "align-right"
+  | "align-justify";
 
 type LayoutBlockAlign = "left" | "center" | "right" | "justify";
 
@@ -599,6 +603,17 @@ function getLayoutBlockAlign(attrs: string): LayoutBlockAlign {
 
 function applyQuoteTextAlign(html: string, align: LayoutBlockAlign): string {
   return html.replace(/text-align:\s*[^;"]+;?/g, `text-align: ${align};`);
+}
+
+function isAlignmentLayoutBlock(type: LayoutBlockType): boolean {
+  return type.startsWith("align-");
+}
+
+function getAlignFromLayoutBlockType(type: LayoutBlockType): LayoutBlockAlign {
+  const align = type.replace("align-", "");
+  return ["left", "center", "right", "justify"].includes(align)
+    ? (align as LayoutBlockAlign)
+    : "center";
 }
 
 function renderLayoutComponentBlocks(
@@ -612,7 +627,7 @@ function renderLayoutComponentBlocks(
   const softColor = colorToRgba(primaryColor, 0.07);
 
   return markdown.replace(
-    /^:::(card|tip|cta|quote-card|quote-bubble|quote-oval|quote-star|quote-line|quote-frame|quote-brush|quote-center|quote-side)([ \t][^\n]*)?\n([\s\S]*?)\n:::[ \t]*$/gm,
+    /^:::(card|tip|cta|quote-card|quote-bubble|quote-oval|quote-star|quote-line|quote-frame|quote-brush|quote-center|quote-side|align-left|align-center|align-right|align-justify)([ \t][^\n]*)?\n([\s\S]*?)\n:::[ \t]*$/gm,
     (
       _match,
       type: LayoutBlockType,
@@ -620,11 +635,23 @@ function renderLayoutComponentBlocks(
       body: string
     ) => {
       const trimmedBody = body.trim();
-      const quoteAlign = getLayoutBlockAlign(attrs ?? "");
+      const quoteAlign = isAlignmentLayoutBlock(type)
+        ? getAlignFromLayoutBlockType(type)
+        : getLayoutBlockAlign(attrs ?? "");
       const quoteHtml = applyQuoteTextAlign(
         stripOuterParagraph(marked.parse(trimmedBody) as string),
         quoteAlign
       );
+
+      if (isAlignmentLayoutBlock(type)) {
+        const style = `margin: 16px 0; text-align: ${quoteAlign};`;
+        const innerHtml = applyQuoteTextAlign(
+          marked.parse(trimmedBody) as string,
+          quoteAlign
+        );
+
+        return `<section data-layout-component="${type}" style="${style}">${innerHtml}</section>`;
+      }
 
       if (type === "quote-card") {
         const style = `margin: 26px 0; padding: 22px 24px; border-radius: 14px; background: linear-gradient(135deg, ${lightColor}, #fff); border: 1px solid ${colorToRgba(primaryColor, 0.24)}; box-shadow: 0 6px 18px ${colorToRgba(primaryColor, 0.1)};`;

@@ -81,6 +81,18 @@ describe("layout component Markdown blocks", () => {
     expect(justifyHtml).toContain("text-align: justify");
   });
 
+  it("renders general alignment blocks", () => {
+    const html = parseMarkdown(
+      ":::align-center\n**需要居中的文字**\n:::",
+      themes[0]
+    );
+
+    expect(html).toContain('data-layout-component="align-center"');
+    expect(html).toContain("text-align: center");
+    expect(html).toContain("需要居中的文字");
+    expect(html).not.toContain("text-align: justify");
+  });
+
   it("uses custom primary color when custom styles are active", () => {
     const html = parseMarkdown(":::card\n卡片内容\n:::", themes[0], {
       primaryColor: "#ec4899",

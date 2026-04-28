@@ -17,7 +17,11 @@ export type LayoutComponentBlockType =
   | "quote-frame"
   | "quote-brush"
   | "quote-center"
-  | "quote-side";
+  | "quote-side"
+  | "align-left"
+  | "align-center"
+  | "align-right"
+  | "align-justify";
 
 export type LayoutComponentAlign = "left" | "center" | "right" | "justify";
 
@@ -39,7 +43,7 @@ export interface LayoutComponentBlockEdit {
 }
 
 const blockPattern =
-  /^:::(card|tip|cta|quote-card|quote-bubble|quote-oval|quote-star|quote-line|quote-frame|quote-brush|quote-center|quote-side)([ \t][^\n]*)?\n([\s\S]*?)\n:::[ \t]*(?=\n|$)/gm;
+  /^:::(card|tip|cta|quote-card|quote-bubble|quote-oval|quote-star|quote-line|quote-frame|quote-brush|quote-center|quote-side|align-left|align-center|align-right|align-justify)([ \t][^\n]*)?\n([\s\S]*?)\n:::[ \t]*(?=\n|$)/gm;
 
 const alignValues = new Set<LayoutComponentAlign>([
   "left",
@@ -82,6 +86,32 @@ export function isQuoteBlockType(type: LayoutComponentBlockType): boolean {
   return type.startsWith("quote-");
 }
 
+export function isAlignmentBlockType(type: LayoutComponentBlockType): boolean {
+  return type.startsWith("align-");
+}
+
+function getAlignmentBlockType(
+  align: LayoutComponentAlign
+): LayoutComponentBlockType {
+  return `align-${align}` as LayoutComponentBlockType;
+}
+
+function getAlignmentFromBlockType(
+  type: LayoutComponentBlockType
+): LayoutComponentAlign {
+  const align = type.replace("align-", "");
+  return isLayoutComponentAlign(align) ? align : "center";
+}
+
+function getBlockAlign(
+  type: LayoutComponentBlockType,
+  attrs: string
+): LayoutComponentAlign {
+  if (isQuoteBlockType(type)) return getLayoutComponentAlign(attrs);
+  if (isAlignmentBlockType(type)) return getAlignmentFromBlockType(type);
+  return "center";
+}
+
 export function getLayoutComponentBlockLabel(
   type: LayoutComponentBlockType
 ): string {
@@ -101,6 +131,10 @@ export function getLayoutComponentBlockLabel(
     "quote-brush": "浅色刷痕",
     "quote-center": "居中金句",
     "quote-side": "侧边金句",
+    "align-left": "左对齐",
+    "align-center": "居中对齐",
+    "align-right": "右对齐",
+    "align-justify": "两端对齐",
   };
 
   return labels[type];
@@ -130,7 +164,7 @@ export function findLayoutComponentBlockAtCursor(
     return {
       type,
       attrs,
-      align: isQuoteBlockType(type) ? getLayoutComponentAlign(attrs) : "center",
+      align: getBlockAlign(type, attrs),
       start,
       end,
       contentStart,
@@ -181,6 +215,34 @@ export function setLayoutComponentBlockAlign(
     selectionStart,
     selectionEnd: selectionStart + block.content.length,
   };
+}
+
+export function createAlignmentBlockEdit(
+  value: string,
+  start: number,
+  end: number,
+  align: LayoutComponentAlign
+): LayoutComponentBlockEdit {
+  const activeBlock = findLayoutComponentBlockAtCursor(value, start);
+  const nextType = getAlignmentBlockType(align);
+
+  if (activeBlock && isAlignmentBlockType(activeBlock.type)) {
+    if (activeBlock.type === nextType) {
+      const unwrapped = unwrapLayoutComponentBlock(value, start);
+      if (unwrapped) return unwrapped;
+    }
+
+    const replaced = replaceLayoutComponentBlock(value, start, nextType);
+    if (replaced) return replaced;
+  }
+
+  const selectedText = value.slice(start, end);
+  return insertBlockTemplate(
+    value,
+    start,
+    end,
+    `:::${nextType}\n${selectedText.trim() || "这里输入要对齐的文字"}\n:::`
+  );
 }
 
 export function replaceLayoutComponentBlockWithTemplate(

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  createAlignmentBlockEdit,
   createLayoutComponentEdit,
   findLayoutComponentBlockAtCursor,
   replaceLayoutComponentBlock,
@@ -80,6 +81,42 @@ describe("layout component block editing", () => {
     );
 
     expect(replaced?.value).toBe(":::quote-line align=justify\n你是最棒的\n:::");
+  });
+
+  it("wraps selected text in an alignment block", () => {
+    const value = "开头\n需要居中的文字\n结尾";
+    const start = value.indexOf("需要");
+    const end = start + "需要居中的文字".length;
+    const result = createAlignmentBlockEdit(value, start, end, "center");
+
+    expect(result.value).toBe(
+      "开头\n\n:::align-center\n需要居中的文字\n:::\n\n结尾"
+    );
+    expect(result.selectionStart).toBe("开头\n\n".length);
+    expect(result.selectionEnd).toBe(
+      "开头\n\n:::align-center\n需要居中的文字\n:::".length
+    );
+  });
+
+  it("changes and toggles an existing alignment block", () => {
+    const value = ":::align-left\n这段要调整\n:::";
+    const switched = createAlignmentBlockEdit(
+      value,
+      value.indexOf("调整"),
+      value.indexOf("调整"),
+      "right"
+    );
+
+    expect(switched.value).toBe(":::align-right\n这段要调整\n:::");
+
+    const unwrapped = createAlignmentBlockEdit(
+      switched.value,
+      switched.value.indexOf("调整"),
+      switched.value.indexOf("调整"),
+      "right"
+    );
+
+    expect(unwrapped.value).toBe("这段要调整");
   });
 
   it("unwraps a component block and keeps the inner content", () => {

@@ -12,9 +12,11 @@ import {
   type LayoutComponentId,
 } from "@/lib/layout-components";
 import {
+  createAlignmentBlockEdit,
   createLayoutComponentEdit,
   findLayoutComponentBlockAtCursor,
   getLayoutComponentBlockLabel,
+  isQuoteBlockType,
   setLayoutComponentBlockAlign,
   unwrapLayoutComponentBlock,
   type LayoutComponentAlign,
@@ -323,6 +325,35 @@ export default function Editor({
     [value, onChange, restoreTextareaAfterEdit]
   );
 
+  const handleSetTextAlign = useCallback(
+    (align: LayoutComponentAlign) => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const previousScrollTop = textarea.scrollTop;
+      const activeBlock = findLayoutComponentBlockAtCursor(value, start);
+      const result =
+        activeBlock && isQuoteBlockType(activeBlock.type)
+          ? setLayoutComponentBlockAlign(value, start, align)
+          : createAlignmentBlockEdit(value, start, end, align);
+
+      if (!result) return;
+
+      onChange(result.value);
+
+      setTimeout(() => {
+        restoreTextareaAfterEdit(
+          result.selectionStart,
+          result.selectionEnd,
+          previousScrollTop
+        );
+      }, 0);
+    },
+    [value, onChange, restoreTextareaAfterEdit]
+  );
+
   // 快捷键处理
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -391,6 +422,7 @@ export default function Editor({
         onInsertComponent={handleInsertComponent}
         onClearComponent={handleClearComponent}
         onSetComponentAlign={handleSetComponentAlign}
+        onSetTextAlign={handleSetTextAlign}
         activeComponent={activeComponent}
       />
       <textarea

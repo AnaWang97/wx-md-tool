@@ -7,6 +7,7 @@ import {
   type LayoutComponentId,
 } from "@/lib/layout-components";
 import {
+  isAlignmentBlockType,
   isQuoteBlockType,
   type LayoutComponentAlign,
   type LayoutComponentBlockType,
@@ -18,6 +19,7 @@ interface ToolbarProps {
   onInsertComponent: (id: LayoutComponentId) => void;
   onClearComponent: () => void;
   onSetComponentAlign: (align: LayoutComponentAlign) => void;
+  onSetTextAlign: (align: LayoutComponentAlign) => void;
   activeComponent?: {
     type: LayoutComponentBlockType;
     label: string;
@@ -39,34 +41,63 @@ const alignOptions: Array<{ value: LayoutComponentAlign; label: string }> = [
   { value: "justify", label: "两端" },
 ];
 
+const toolbarAlignOptions: Array<{
+  value: LayoutComponentAlign;
+  label: string;
+}> = [
+  { value: "left", label: "左对齐" },
+  { value: "center", label: "居中对齐" },
+  { value: "right", label: "右对齐" },
+  { value: "justify", label: "两端对齐" },
+];
+
 export default function EditorToolbar({
   onInsert,
   onWrap,
   onInsertComponent,
   onClearComponent,
   onSetComponentAlign,
+  onSetTextAlign,
   activeComponent,
 }: ToolbarProps) {
   const [isComponentMenuOpen, setIsComponentMenuOpen] = useState(false);
   const [isQuoteMenuOpen, setIsQuoteMenuOpen] = useState(false);
+  const [isAlignMenuOpen, setIsAlignMenuOpen] = useState(false);
   const componentMenuRef = useRef<HTMLDivElement>(null);
+  const alignMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isComponentMenuOpen) return;
+    if (!isComponentMenuOpen && !isAlignMenuOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
+        isComponentMenuOpen &&
         componentMenuRef.current &&
         !componentMenuRef.current.contains(event.target as Node)
       ) {
         setIsComponentMenuOpen(false);
         setIsQuoteMenuOpen(false);
       }
+
+      if (
+        isAlignMenuOpen &&
+        alignMenuRef.current &&
+        !alignMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsAlignMenuOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isComponentMenuOpen]);
+  }, [isAlignMenuOpen, isComponentMenuOpen]);
+
+  const currentToolbarAlign =
+    activeComponent &&
+    (isQuoteBlockType(activeComponent.type) ||
+      isAlignmentBlockType(activeComponent.type))
+      ? activeComponent.align
+      : null;
 
   const tools: ToolButton[] = [
     // 标题
@@ -252,6 +283,54 @@ export default function EditorToolbar({
       </div>
 
       <div className="flex items-center px-2 py-1.5 border-l border-pink-100 bg-white/95">
+        <div ref={alignMenuRef} className="relative flex items-center">
+          <button
+            onClick={() => {
+              setIsAlignMenuOpen((open) => !open);
+              setIsComponentMenuOpen(false);
+              setIsQuoteMenuOpen(false);
+            }}
+            title="对齐方式"
+            className={`p-1.5 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center justify-center min-w-[28px] h-7 ${
+              isAlignMenuOpen ? "bg-pink-100" : ""
+            }`}
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="4" y1="11" x2="16" y2="11" />
+              <line x1="4" y1="16" x2="20" y2="16" />
+              <line x1="4" y1="21" x2="14" y2="21" />
+            </svg>
+          </button>
+          <div
+            aria-hidden={!isAlignMenuOpen}
+            className={`absolute right-0 top-full mt-2 w-28 rounded-xl border-2 border-pink-100 bg-white py-1 shadow-xl z-[90] ${
+              isAlignMenuOpen ? "" : "hidden"
+            }`}
+          >
+            {toolbarAlignOptions.map((option) => {
+              const isActive = currentToolbarAlign === option.value;
+
+              return (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    onSetTextAlign(option.value);
+                    setIsAlignMenuOpen(false);
+                  }}
+                  className={`w-full px-3 py-2 text-left text-xs font-medium transition-colors ${
+                    isActive
+                      ? "bg-purple-50 text-purple-700"
+                      : "text-pink-500 hover:bg-pink-50 hover:text-purple-600"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="w-px h-4 bg-pink-200 mx-1" />
         <div ref={componentMenuRef} className="relative flex items-center">
           <button
             onClick={() => {

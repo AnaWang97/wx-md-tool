@@ -6,6 +6,7 @@ import {
   hasHtmlContent,
   getHtmlFromClipboard,
 } from "@/lib/html-to-markdown";
+import { getRestoredTextareaScrollTop } from "@/lib/editor-scroll";
 import {
   type LayoutComponentId,
 } from "@/lib/layout-components";
@@ -57,6 +58,27 @@ export default function Editor({
 
     setCursorPosition(textarea.selectionStart);
   }, []);
+
+  const restoreTextareaAfterEdit = useCallback(
+    (
+      selectionStart: number,
+      selectionEnd: number,
+      previousScrollTop: number
+    ) => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      textarea.focus();
+      textarea.setSelectionRange(selectionStart, selectionEnd);
+      textarea.scrollTop = getRestoredTextareaScrollTop({
+        previousScrollTop,
+        scrollHeight: textarea.scrollHeight,
+        clientHeight: textarea.clientHeight,
+      });
+      setCursorPosition(selectionStart);
+    },
+    []
+  );
 
   // 处理粘贴事件 - 智能识别富文本
   const handlePaste = useCallback(
@@ -147,6 +169,7 @@ export default function Editor({
 
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
+      const previousScrollTop = textarea.scrollTop;
       const selectedText = value.substring(start, end) || defaultText;
 
       // 检查是否在行首，如果不是则添加换行
@@ -166,12 +189,10 @@ export default function Editor({
       // 设置光标位置
       setTimeout(() => {
         const newCursorPos = start + prefix.length + before.length + selectedText.length;
-        textarea.focus();
-        textarea.setSelectionRange(newCursorPos, newCursorPos);
-        setCursorPosition(newCursorPos);
+        restoreTextareaAfterEdit(newCursorPos, newCursorPos, previousScrollTop);
       }, 0);
     },
-    [value, onChange]
+    [value, onChange, restoreTextareaAfterEdit]
   );
 
   // 工具栏：包裹选中文本
@@ -182,6 +203,7 @@ export default function Editor({
 
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
+      const previousScrollTop = textarea.scrollTop;
       const selectedText = value.substring(start, end) || defaultText;
 
       const newValue =
@@ -195,15 +217,14 @@ export default function Editor({
 
       // 选中插入的文本
       setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(
+        restoreTextareaAfterEdit(
           start + prefix.length,
-          start + prefix.length + selectedText.length
+          start + prefix.length + selectedText.length,
+          previousScrollTop
         );
-        setCursorPosition(start + prefix.length);
       }, 0);
     },
-    [value, onChange]
+    [value, onChange, restoreTextareaAfterEdit]
   );
 
   const handleInsertComponent = useCallback(
@@ -213,34 +234,40 @@ export default function Editor({
 
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
+      const previousScrollTop = textarea.scrollTop;
       const result = createLayoutComponentEdit(value, start, end, id);
 
       onChange(result.value);
 
       setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(result.selectionEnd, result.selectionEnd);
-        setCursorPosition(result.selectionEnd);
+        restoreTextareaAfterEdit(
+          result.selectionEnd,
+          result.selectionEnd,
+          previousScrollTop
+        );
       }, 0);
     },
-    [value, onChange]
+    [value, onChange, restoreTextareaAfterEdit]
   );
 
   const handleClearComponent = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
+    const previousScrollTop = textarea.scrollTop;
     const result = unwrapLayoutComponentBlock(value, textarea.selectionStart);
     if (!result) return;
 
     onChange(result.value);
 
     setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(result.selectionStart, result.selectionEnd);
-      setCursorPosition(result.selectionStart);
+      restoreTextareaAfterEdit(
+        result.selectionStart,
+        result.selectionEnd,
+        previousScrollTop
+      );
     }, 0);
-  }, [value, onChange]);
+  }, [value, onChange, restoreTextareaAfterEdit]);
 
   // 快捷键处理
   const handleKeyDown = useCallback(

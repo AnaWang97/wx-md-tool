@@ -474,10 +474,20 @@ function normalizeHorizontalRuleSpacing(markdown: string): string {
       return;
     }
 
+    const inlineRuleMatch = !inFence
+      ? line.match(/^(.+\S)[ \t]+(-{3,}|\*{3,}|_{3,})[ \t]*$/)
+      : null;
+    const horizontalRuleLine = inlineRuleMatch ? inlineRuleMatch[2] : line;
     const isHorizontalRule =
-      !inFence && /^[ \t]{0,3}(?:-{3,}|\*{3,}|_{3,})[ \t]*$/.test(line);
-    const previousLine = result[result.length - 1];
+      !inFence &&
+      /^[ \t]{0,3}(?:-{3,}|\*{3,}|_{3,})[ \t]*$/.test(horizontalRuleLine);
     const nextLine = lines[index + 1];
+
+    if (inlineRuleMatch) {
+      result.push(inlineRuleMatch[1]);
+    }
+
+    const previousLine = result[result.length - 1];
 
     if (
       isHorizontalRule &&
@@ -487,7 +497,7 @@ function normalizeHorizontalRuleSpacing(markdown: string): string {
       result.push("");
     }
 
-    result.push(line);
+    result.push(horizontalRuleLine);
 
     if (
       isHorizontalRule &&

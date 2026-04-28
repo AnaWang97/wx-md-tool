@@ -34,4 +34,30 @@ describe("parseMarkdown", () => {
     expect(html).toContain("下一节");
     expect(html).not.toContain(">---<");
   });
+
+  it("renders a horizontal rule after a bold sentence with trailing whitespace", () => {
+    const html = parseMarkdown(
+      "**我的答案是：不一定。 **\n\n---\n\n## 下一节",
+      themes[0]
+    );
+
+    expect(html).toContain("<strong");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("下一节");
+    expect(html).not.toContain("---");
+  });
+
+  it("splits a trailing horizontal rule marker out of a bold paragraph", () => {
+    const html = parseMarkdown(
+      "**我的答案是：不一定。 ** ---\n## 下一节",
+      themes[0]
+    );
+
+    expect(html).toContain("<strong");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("下一节");
+    expect(html).not.toContain("---");
+  });
 });

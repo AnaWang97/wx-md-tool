@@ -291,6 +291,7 @@ export function createMarkdownRenderer(
   const styles = customStyles
     ? applyCustomStyles(theme.styles, customStyles, theme.colorFollowable ?? false)
     : theme.styles;
+  const primaryColor = getPrimaryColor(theme, customStyles);
 
   // 标题
   renderer.heading = function ({ tokens, depth }: Tokens.Heading): string {
@@ -335,7 +336,10 @@ export function createMarkdownRenderer(
 
   // 引用块
   renderer.blockquote = ({ text }: Tokens.Blockquote): string => {
-    return `<blockquote style="${styles.blockquote}">${text}</blockquote>`;
+    const markStyle = `display: block; margin: 0 0 8px; color: ${primaryColor}; font-size: 24px; line-height: 1; font-weight: 700;`;
+    const contentStyle = "display: block;";
+
+    return `<blockquote style="${styles.blockquote}"><span aria-hidden="true" style="${markStyle}">“</span><section style="${contentStyle}">${text}</section></blockquote>`;
   };
 
   // 行内代码

@@ -6,16 +6,22 @@ import {
   quoteComponents,
   type LayoutComponentId,
 } from "@/lib/layout-components";
-import type { LayoutComponentBlockType } from "@/lib/layout-component-block";
+import {
+  isQuoteBlockType,
+  type LayoutComponentAlign,
+  type LayoutComponentBlockType,
+} from "@/lib/layout-component-block";
 
 interface ToolbarProps {
   onInsert: (before: string, after?: string, defaultText?: string) => void;
   onWrap: (prefix: string, suffix: string, defaultText?: string) => void;
   onInsertComponent: (id: LayoutComponentId) => void;
   onClearComponent: () => void;
+  onSetComponentAlign: (align: LayoutComponentAlign) => void;
   activeComponent?: {
     type: LayoutComponentBlockType;
     label: string;
+    align: LayoutComponentAlign;
   } | null;
 }
 
@@ -26,11 +32,19 @@ interface ToolButton {
   divider?: boolean;
 }
 
+const alignOptions: Array<{ value: LayoutComponentAlign; label: string }> = [
+  { value: "left", label: "左" },
+  { value: "center", label: "中" },
+  { value: "right", label: "右" },
+  { value: "justify", label: "两端" },
+];
+
 export default function EditorToolbar({
   onInsert,
   onWrap,
   onInsertComponent,
   onClearComponent,
+  onSetComponentAlign,
   activeComponent,
 }: ToolbarProps) {
   const [isComponentMenuOpen, setIsComponentMenuOpen] = useState(false);
@@ -244,7 +258,7 @@ export default function EditorToolbar({
               setIsComponentMenuOpen((open) => {
                 const nextOpen = !open;
                 setIsQuoteMenuOpen(
-                  nextOpen && Boolean(activeComponent?.type.startsWith("quote-"))
+                  nextOpen && Boolean(activeComponent && isQuoteBlockType(activeComponent.type))
                 );
                 return nextOpen;
               });
@@ -281,6 +295,32 @@ export default function EditorToolbar({
                     当前：{activeComponent.label}
                   </span>
                 </div>
+                {isQuoteBlockType(activeComponent.type) && (
+                  <div className="mb-2">
+                    <div className="mb-1.5 text-[11px] font-medium text-purple-500">
+                      对齐方式
+                    </div>
+                    <div className="grid grid-cols-4 gap-1 rounded-lg bg-pink-50/70 p-1">
+                      {alignOptions.map((option) => {
+                        const isActive = activeComponent.align === option.value;
+
+                        return (
+                          <button
+                            key={option.value}
+                            onClick={() => onSetComponentAlign(option.value)}
+                            className={`h-7 rounded-md text-[11px] font-medium transition-colors ${
+                              isActive
+                                ? "bg-white text-purple-700 shadow-sm"
+                                : "text-pink-500 hover:bg-white/70 hover:text-purple-600"
+                            }`}
+                          >
+                            {option.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 <button
                   onClick={() => {
                     onClearComponent();

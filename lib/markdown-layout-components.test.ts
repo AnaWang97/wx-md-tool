@@ -65,6 +65,22 @@ describe("layout component Markdown blocks", () => {
     expect(brushHtml).toContain("linear-gradient(100deg");
   });
 
+  it("renders quote component alignment from opening fence attributes", () => {
+    const leftHtml = parseMarkdown(":::quote-line align=left\n先让读者扫得懂\n:::", themes[0]);
+    const rightHtml = parseMarkdown(":::quote-frame align=right\n先让读者扫得懂\n:::", themes[0]);
+    const justifyHtml = parseMarkdown(
+      ":::quote-card align=justify\n先让读者扫得懂\n\n再让读者愿意行动\n:::",
+      themes[0]
+    );
+
+    expect(leftHtml).toContain('data-layout-component="quote-line"');
+    expect(leftHtml).toContain("text-align: left");
+    expect(rightHtml).toContain('data-layout-component="quote-frame"');
+    expect(rightHtml).toContain("text-align: right");
+    expect(justifyHtml).toContain('data-layout-component="quote-card"');
+    expect(justifyHtml).toContain("text-align: justify");
+  });
+
   it("uses custom primary color when custom styles are active", () => {
     const html = parseMarkdown(":::card\n卡片内容\n:::", themes[0], {
       primaryColor: "#ec4899",

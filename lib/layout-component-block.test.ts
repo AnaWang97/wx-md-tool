@@ -3,6 +3,7 @@ import {
   createLayoutComponentEdit,
   findLayoutComponentBlockAtCursor,
   replaceLayoutComponentBlock,
+  setLayoutComponentBlockAlign,
   unwrapLayoutComponentBlock,
 } from "./layout-component-block";
 
@@ -42,6 +43,43 @@ describe("layout component block editing", () => {
     expect(result?.value).toBe(":::quote-card\n你是最棒的\n:::");
     expect(result?.selectionStart).toBe(":::quote-card\n".length);
     expect(result?.selectionEnd).toBe(":::quote-card\n你是最棒的".length);
+  });
+
+  it("reads quote component alignment from the opening fence", () => {
+    const value = ":::quote-line align=right\n你是最棒的\n:::";
+    const block = findLayoutComponentBlockAtCursor(value, value.indexOf("最棒"));
+
+    expect(block).toMatchObject({
+      type: "quote-line",
+      align: "right",
+      content: "你是最棒的",
+    });
+  });
+
+  it("preserves quote alignment when changing the quote style", () => {
+    const value = ":::quote-line align=right\n你是最棒的\n:::";
+    const result = replaceLayoutComponentBlock(
+      value,
+      value.indexOf("最棒"),
+      "quote-card"
+    );
+
+    expect(result?.value).toBe(":::quote-card align=right\n你是最棒的\n:::");
+  });
+
+  it("adds and replaces quote component alignment", () => {
+    const value = ":::quote-line\n你是最棒的\n:::";
+    const added = setLayoutComponentBlockAlign(value, value.indexOf("最棒"), "left");
+
+    expect(added?.value).toBe(":::quote-line align=left\n你是最棒的\n:::");
+
+    const replaced = setLayoutComponentBlockAlign(
+      added?.value ?? "",
+      added?.value.indexOf("最棒") ?? 0,
+      "justify"
+    );
+
+    expect(replaced?.value).toBe(":::quote-line align=justify\n你是最棒的\n:::");
   });
 
   it("unwraps a component block and keeps the inner content", () => {

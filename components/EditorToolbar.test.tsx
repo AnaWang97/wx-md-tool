@@ -10,6 +10,7 @@ describe("EditorToolbar", () => {
         onWrap={() => undefined}
         onInsertComponent={() => undefined}
         onClearComponent={() => undefined}
+        onSetComponentAlign={() => undefined}
       />
     );
 
@@ -38,16 +39,22 @@ describe("EditorToolbar", () => {
   it("shows current component actions when the cursor is inside a component", () => {
     const html = renderToStaticMarkup(
       <EditorToolbar
-        activeComponent={{ type: "quote-bubble", label: "对话框" }}
+        activeComponent={{ type: "quote-bubble", label: "对话框", align: "right" }}
         onInsert={() => undefined}
         onWrap={() => undefined}
         onInsertComponent={() => undefined}
         onClearComponent={() => undefined}
+        onSetComponentAlign={() => undefined}
       />
     );
 
     expect(html).toContain("当前组件");
     expect(html).toContain("当前：对话框");
     expect(html).toContain("取消组件");
+    expect(html).toContain("对齐方式");
+    expect(html).toContain("左");
+    expect(html).toContain("中");
+    expect(html).toContain("右");
+    expect(html).toContain("两端");
   });
 });

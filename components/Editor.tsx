@@ -15,7 +15,9 @@ import {
   createLayoutComponentEdit,
   findLayoutComponentBlockAtCursor,
   getLayoutComponentBlockLabel,
+  setLayoutComponentBlockAlign,
   unwrapLayoutComponentBlock,
+  type LayoutComponentAlign,
 } from "@/lib/layout-component-block";
 import EditorToolbar from "./EditorToolbar";
 
@@ -49,6 +51,7 @@ export default function Editor({
       ? {
           type: block.type,
           label: getLayoutComponentBlockLabel(block.type),
+          align: block.align,
         }
       : null;
   }, [value, cursorPosition]);
@@ -294,6 +297,32 @@ export default function Editor({
     }, 0);
   }, [value, onChange, restoreTextareaAfterEdit]);
 
+  const handleSetComponentAlign = useCallback(
+    (align: LayoutComponentAlign) => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      const previousScrollTop = textarea.scrollTop;
+      const result = setLayoutComponentBlockAlign(
+        value,
+        textarea.selectionStart,
+        align
+      );
+      if (!result) return;
+
+      onChange(result.value);
+
+      setTimeout(() => {
+        restoreTextareaAfterEdit(
+          result.selectionStart,
+          result.selectionEnd,
+          previousScrollTop
+        );
+      }, 0);
+    },
+    [value, onChange, restoreTextareaAfterEdit]
+  );
+
   // 快捷键处理
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -361,6 +390,7 @@ export default function Editor({
         onWrap={handleWrap}
         onInsertComponent={handleInsertComponent}
         onClearComponent={handleClearComponent}
+        onSetComponentAlign={handleSetComponentAlign}
         activeComponent={activeComponent}
       />
       <textarea

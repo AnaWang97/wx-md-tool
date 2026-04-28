@@ -19,8 +19,12 @@ export type LayoutComponentBlockType =
   | "quote-center"
   | "quote-side";
 
+export type LayoutComponentAlign = "left" | "center" | "right" | "justify";
+
 export interface LayoutComponentBlock {
   type: LayoutComponentBlockType;
+  attrs: string;
+  align: LayoutComponentAlign;
   start: number;
   end: number;
   contentStart: number;
@@ -35,7 +39,40 @@ export interface LayoutComponentBlockEdit {
 }
 
 const blockPattern =
-  /^:::(card|tip|cta|quote-card|quote-bubble|quote-oval|quote-star|quote-line|quote-frame|quote-brush|quote-center|quote-side)[ \t]*\n([\s\S]*?)\n:::[ \t]*(?=\n|$)/gm;
+  /^:::(card|tip|cta|quote-card|quote-bubble|quote-oval|quote-star|quote-line|quote-frame|quote-brush|quote-center|quote-side)([ \t][^\n]*)?\n([\s\S]*?)\n:::[ \t]*(?=\n|$)/gm;
+
+const alignValues = new Set<LayoutComponentAlign>([
+  "left",
+  "center",
+  "right",
+  "justify",
+]);
+
+export function isLayoutComponentAlign(
+  value: string
+): value is LayoutComponentAlign {
+  return alignValues.has(value as LayoutComponentAlign);
+}
+
+function getLayoutComponentAlign(attrs: string): LayoutComponentAlign {
+  const match = attrs.match(/\balign=(left|center|right|justify)\b/);
+  return match && isLayoutComponentAlign(match[1]) ? match[1] : "center";
+}
+
+function setLayoutComponentAlignAttr(
+  attrs: string,
+  align: LayoutComponentAlign
+): string {
+  const trimmedAttrs = attrs.trim();
+
+  if (!trimmedAttrs) return ` align=${align}`;
+
+  if (/\balign=[^\s]+/.test(trimmedAttrs)) {
+    return ` ${trimmedAttrs.replace(/\balign=[^\s]+/, `align=${align}`)}`;
+  }
+
+  return ` ${trimmedAttrs} align=${align}`;
+}
 
 export function isQuoteComponentId(id: LayoutComponentId): boolean {
   return quoteComponents.some((component) => component.id === id);
@@ -87,8 +124,13 @@ export function findLayoutComponentBlockAtCursor(
     const contentStart = start + firstLineBreak + 1;
     const contentEnd = start + closingFence;
 
+    const type = match[1] as LayoutComponentBlockType;
+    const attrs = match[2] ?? "";
+
     return {
-      type: match[1] as LayoutComponentBlockType,
+      type,
+      attrs,
+      align: isQuoteBlockType(type) ? getLayoutComponentAlign(attrs) : "center",
       start,
       end,
       contentStart,
@@ -108,7 +150,29 @@ export function replaceLayoutComponentBlock(
   const block = findLayoutComponentBlockAtCursor(value, cursor);
   if (!block) return null;
 
-  const openingFence = `:::${nextType}`;
+  const openingFence = `:::${nextType}${
+    isQuoteBlockType(nextType) ? block.attrs : ""
+  }`;
+  const nextBlock = `${openingFence}\n${block.content}\n:::`;
+  const selectionStart = block.start + openingFence.length + 1;
+
+  return {
+    value: `${value.slice(0, block.start)}${nextBlock}${value.slice(block.end)}`,
+    selectionStart,
+    selectionEnd: selectionStart + block.content.length,
+  };
+}
+
+export function setLayoutComponentBlockAlign(
+  value: string,
+  cursor: number,
+  align: LayoutComponentAlign
+): LayoutComponentBlockEdit | null {
+  const block = findLayoutComponentBlockAtCursor(value, cursor);
+  if (!block || !isQuoteBlockType(block.type)) return null;
+
+  const nextAttrs = setLayoutComponentAlignAttr(block.attrs, align);
+  const openingFence = `:::${block.type}${nextAttrs}`;
   const nextBlock = `${openingFence}\n${block.content}\n:::`;
   const selectionStart = block.start + openingFence.length + 1;
 

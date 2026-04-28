@@ -20,5 +20,7 @@ describe("EditorToolbar", () => {
     expect(html).toContain("避坑提醒");
     expect(html).toContain("总结复盘");
     expect(html).toContain("关注引导");
+    expect(html).toContain("overflow-visible");
+    expect(html).toContain("right-0 top-full");
   });
 });

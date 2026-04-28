@@ -195,62 +195,66 @@ export default function EditorToolbar({
   ];
 
   return (
-    <div className="flex items-center gap-0.5 px-2 py-1.5 bg-white/90 border-b-2 border-pink-100 overflow-x-auto">
-      {tools.map((tool, index) => (
-        <div key={index} className="flex items-center">
-          <button
-            onClick={tool.action}
-            title={tool.label}
-            className="p-1.5 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center justify-center min-w-[28px] h-7"
-          >
-            {tool.icon}
-          </button>
-          {tool.divider && (
-            <div className="w-px h-4 bg-pink-200 mx-1" />
-          )}
-        </div>
-      ))}
-      <div className="w-px h-4 bg-pink-200 mx-1" />
-      <div ref={componentMenuRef} className="relative flex items-center">
-        <button
-          onClick={() => setIsComponentMenuOpen((open) => !open)}
-          title="排版组件"
-          className="px-2.5 h-7 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1 text-xs font-medium"
-        >
-          组件
-          <span className={`transition-transform ${isComponentMenuOpen ? "rotate-180" : ""}`}>
-            ▾
-          </span>
-        </button>
-
-        <div
-          aria-hidden={!isComponentMenuOpen}
-          className={`absolute left-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-pink-100 z-[60] overflow-hidden ${
-            isComponentMenuOpen ? "" : "hidden"
-          }`}
-        >
-          {layoutComponents.map((component) => (
+    <div className="relative flex items-center bg-white/90 border-b-2 border-pink-100 overflow-visible">
+      <div className="flex min-w-0 flex-1 items-center gap-0.5 px-2 py-1.5 overflow-x-auto">
+        {tools.map((tool, index) => (
+          <div key={index} className="flex items-center">
             <button
-              key={component.id}
-              onClick={() => {
-                onInsertComponent(component.id);
-                setIsComponentMenuOpen(false);
-              }}
-              className="w-full px-3 py-2.5 text-left hover:bg-pink-50 flex items-center gap-3 transition-colors"
+              onClick={tool.action}
+              title={tool.label}
+              className="p-1.5 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center justify-center min-w-[28px] h-7"
             >
-              <span className="w-7 h-7 rounded-lg bg-pink-50 text-purple-500 flex items-center justify-center text-xs font-bold">
-                {component.icon}
-              </span>
-              <span className="min-w-0">
-                <span className="block text-sm text-purple-700 font-medium">
-                  {component.label}
-                </span>
-                <span className="block text-xs text-pink-400 truncate">
-                  {component.description}
-                </span>
-              </span>
+              {tool.icon}
             </button>
-          ))}
+            {tool.divider && (
+              <div className="w-px h-4 bg-pink-200 mx-1" />
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center px-2 py-1.5 border-l border-pink-100 bg-white/95">
+        <div ref={componentMenuRef} className="relative flex items-center">
+          <button
+            onClick={() => setIsComponentMenuOpen((open) => !open)}
+            title="排版组件"
+            className="px-2.5 h-7 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1 text-xs font-medium whitespace-nowrap"
+          >
+            组件
+            <span className={`transition-transform ${isComponentMenuOpen ? "rotate-180" : ""}`}>
+              ▾
+            </span>
+          </button>
+
+          <div
+            aria-hidden={!isComponentMenuOpen}
+            className={`absolute right-0 top-full mt-2 w-60 bg-white rounded-xl shadow-xl border-2 border-pink-100 z-[80] overflow-hidden ${
+              isComponentMenuOpen ? "" : "hidden"
+            }`}
+          >
+            {layoutComponents.map((component) => (
+              <button
+                key={component.id}
+                onClick={() => {
+                  onInsertComponent(component.id);
+                  setIsComponentMenuOpen(false);
+                }}
+                className="w-full px-3 py-2.5 text-left hover:bg-pink-50 flex items-center gap-3 transition-colors"
+              >
+                <span className="w-7 h-7 rounded-lg bg-pink-50 text-purple-500 flex items-center justify-center text-xs font-bold">
+                  {component.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm text-purple-700 font-medium">
+                    {component.label}
+                  </span>
+                  <span className="block text-xs text-pink-400 truncate">
+                    {component.description}
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

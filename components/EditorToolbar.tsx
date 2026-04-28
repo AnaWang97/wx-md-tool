@@ -90,6 +90,16 @@ export default function EditorToolbar({
     },
     {
       icon: (
+        <span className="relative inline-flex h-4 min-w-4 items-center justify-center px-0.5 text-[11px] font-bold leading-none">
+          <span className="relative z-10">==</span>
+          <span className="absolute bottom-0 left-0 right-0 h-1.5 rounded-sm bg-pink-200" />
+        </span>
+      ),
+      label: "高亮",
+      action: () => onWrap("==", "==", "高亮文本"),
+    },
+    {
+      icon: (
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="3" y="3" width="18" height="18" rx="2" />
           <path d="M9 12h6" />

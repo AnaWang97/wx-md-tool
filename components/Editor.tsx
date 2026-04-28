@@ -7,6 +7,7 @@ import {
   getHtmlFromClipboard,
 } from "@/lib/html-to-markdown";
 import { getRestoredTextareaScrollTop } from "@/lib/editor-scroll";
+import { toggleTextAffix } from "@/lib/markdown-formatting";
 import {
   type LayoutComponentId,
 } from "@/lib/layout-components";
@@ -175,6 +176,30 @@ export default function Editor({
       // 检查是否在行首，如果不是则添加换行
       const needNewLine = before.startsWith("#") || before.startsWith("-") || before.startsWith("1.") || before.startsWith(">") || before.startsWith("```") || before.startsWith("|") || before.startsWith("\n");
       const prefix = needNewLine && start > 0 && value[start - 1] !== "\n" ? "\n" : "";
+      const isToggleableFormat = defaultText.length > 0 && !before.startsWith("|");
+
+      if (isToggleableFormat) {
+        const result = toggleTextAffix({
+          value,
+          start,
+          end,
+          prefix: before,
+          suffix: after,
+          defaultText,
+          leadingPrefix: prefix,
+        });
+
+        onChange(result.value);
+
+        setTimeout(() => {
+          restoreTextareaAfterEdit(
+            result.selectionStart,
+            result.selectionEnd,
+            previousScrollTop
+          );
+        }, 0);
+        return;
+      }
 
       const newValue =
         value.substring(0, start) +
@@ -204,22 +229,22 @@ export default function Editor({
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
       const previousScrollTop = textarea.scrollTop;
-      const selectedText = value.substring(start, end) || defaultText;
+      const result = toggleTextAffix({
+        value,
+        start,
+        end,
+        prefix,
+        suffix,
+        defaultText,
+      });
 
-      const newValue =
-        value.substring(0, start) +
-        prefix +
-        selectedText +
-        suffix +
-        value.substring(end);
-
-      onChange(newValue);
+      onChange(result.value);
 
       // 选中插入的文本
       setTimeout(() => {
         restoreTextareaAfterEdit(
-          start + prefix.length,
-          start + prefix.length + selectedText.length,
+          result.selectionStart,
+          result.selectionEnd,
           previousScrollTop
         );
       }, 0);

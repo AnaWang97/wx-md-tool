@@ -15,6 +15,7 @@ describe("EditorToolbar", () => {
 
     expect(html).toContain("组件");
     expect(html).toContain("排版组件");
+    expect(html).toContain("高亮");
     expect(html).toContain("先选中文字，再点组件；未选择时插入模板");
     expect(html).toContain("金句卡片");
     expect(html).toContain("选择一种金句展示样式");

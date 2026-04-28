@@ -444,6 +444,32 @@ export function createMarkdownRenderer(
 }
 
 // 预处理 Markdown，修复常见的格式问题
+const horizontalWhitespace = "[ \\t\\u00a0\\u1680\\u2000-\\u200a\\u202f\\u205f\\u3000\\ufeff]";
+const horizontalRuleMarker = "(?:-{3,}|\\*{3,}|_{3,}|[\\u2010-\\u2015\\u2212\\ufe58\\ufe63\\uff0d]{3,})";
+const horizontalRulePattern = new RegExp(
+  `^${horizontalWhitespace}*${horizontalRuleMarker}${horizontalWhitespace}*$`,
+  "u"
+);
+const inlineHorizontalRulePattern = new RegExp(
+  `^([\\s\\S]*?\\S)${horizontalWhitespace}+(${horizontalRuleMarker})${horizontalWhitespace}*$`,
+  "u"
+);
+const horizontalWhitespacePattern = new RegExp(horizontalWhitespace, "gu");
+const dashVariantPattern = /[\u2010-\u2015\u2212\ufe58\ufe63\uff0d]/g;
+
+function normalizeHorizontalRuleMarker(line: string): string | null {
+  if (!horizontalRulePattern.test(line)) return null;
+
+  const marker = line
+    .replace(horizontalWhitespacePattern, "")
+    .replace(dashVariantPattern, "-")
+    .charAt(0);
+
+  if (marker === "*") return "***";
+  if (marker === "_") return "___";
+  return "---";
+}
+
 function normalizeHorizontalRuleSpacing(markdown: string): string {
   const lines = markdown.split("\n");
   const result: string[] = [];
@@ -475,12 +501,13 @@ function normalizeHorizontalRuleSpacing(markdown: string): string {
     }
 
     const inlineRuleMatch = !inFence
-      ? line.match(/^(.+\S)[ \t]+(-{3,}|\*{3,}|_{3,})[ \t]*$/)
+      ? line.match(inlineHorizontalRulePattern)
       : null;
     const horizontalRuleLine = inlineRuleMatch ? inlineRuleMatch[2] : line;
-    const isHorizontalRule =
-      !inFence &&
-      /^[ \t]{0,3}(?:-{3,}|\*{3,}|_{3,})[ \t]*$/.test(horizontalRuleLine);
+    const normalizedRule = !inFence
+      ? normalizeHorizontalRuleMarker(horizontalRuleLine)
+      : null;
+    const isHorizontalRule = normalizedRule !== null;
     const nextLine = lines[index + 1];
 
     if (inlineRuleMatch) {
@@ -497,7 +524,7 @@ function normalizeHorizontalRuleSpacing(markdown: string): string {
       result.push("");
     }
 
-    result.push(horizontalRuleLine);
+    result.push(normalizedRule ?? horizontalRuleLine);
 
     if (
       isHorizontalRule &&
@@ -513,6 +540,9 @@ function normalizeHorizontalRuleSpacing(markdown: string): string {
 
 function preprocessMarkdown(markdown: string): string {
   let result = markdown;
+
+  // 统一换行符，避免从富文本或 Windows 文档粘贴来的 \r 影响块级语法识别
+  result = result.replace(/\r\n?/g, "\n");
 
   // 移除零宽字符和其他不可见字符（保留换行和普通空格）
   result = result.replace(/[\u200B-\u200D\uFEFF]/g, '');

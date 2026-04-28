@@ -60,4 +60,30 @@ describe("parseMarkdown", () => {
     expect(html).toContain("下一节");
     expect(html).not.toContain("---");
   });
+
+  it("normalizes pasted whitespace around horizontal rules", () => {
+    const html = parseMarkdown(
+      "**我的答案是：不一定。 **\n\n\u00a0---\u3000\n\n## 下一节",
+      themes[0]
+    );
+
+    expect(html).toContain("<strong");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("下一节");
+    expect(html).not.toContain("---");
+  });
+
+  it("normalizes windows line endings around horizontal rules", () => {
+    const html = parseMarkdown(
+      "**我的答案是：不一定。 **\r\n\r\n---\r\n\r\n## 下一节",
+      themes[0]
+    );
+
+    expect(html).toContain("<strong");
+    expect(html).toContain("我的答案是：不一定。");
+    expect(html).toContain("<hr");
+    expect(html).toContain("下一节");
+    expect(html).not.toContain("---");
+  });
 });

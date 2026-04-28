@@ -19,6 +19,16 @@ describe("EditorToolbar", () => {
     expect(html).toContain("排版组件");
     expect(html).toContain("高亮");
     expect(html).toContain("对齐方式");
+    expect(html).toContain("分割线样式");
+    expect(html).toContain("默认样式");
+    expect(html).toContain("星糖点点");
+    expect(html).toContain("小花叶片");
+    expect(html).toContain("爱心点线");
+    expect(html).toContain("柔光细线");
+    expect(html).toContain("中点细线");
+    expect(html).toContain("双细线");
+    expect(html).toContain("轻虚线");
+    expect(html).toContain("小钻细线");
     expect(html).toContain("左对齐");
     expect(html).toContain("居中对齐");
     expect(html).toContain("右对齐");

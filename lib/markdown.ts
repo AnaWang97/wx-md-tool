@@ -1,6 +1,7 @@
 import { marked, Renderer, Tokens } from "marked";
 import hljs from "highlight.js";
 import { Theme } from "./themes";
+import { dividerStyleOptions, type DividerStyleId } from "./divider-styles";
 
 // 代码高亮主题类型
 export type CodeTheme = "github-dark" | "github-light" | "monokai" | "dracula";
@@ -372,11 +373,11 @@ export function createMarkdownRenderer(
 
   // 列表
   renderer.list = function (token: Tokens.List): string {
-    const tag = token.ordered ? "ol" : "ul";
-    // 强制使用统一的列表容器样式
-    const listStyle = "margin: 16px 0; padding-left: 10px; list-style: none;";
-    // 列表项样式
-    const liBaseStyle = "margin: 12px 0; line-height: 1.8;";
+    // 公众号后台会重排原生 ol/li，复制后容易把序号拆到单独一行。
+    // 这里用普通段落和手动序号，保证预览与公众号粘贴效果一致。
+    const listType = token.ordered ? "ordered" : "unordered";
+    const listStyle = "margin: 16px 0; padding: 0;";
+    const itemStyle = "margin: 12px 0; line-height: 1.8;";
     // 保存 parser 引用
     const parser = this.parser;
     const primaryColor = customStyles?.primaryColor || theme.preview;
@@ -388,19 +389,16 @@ export function createMarkdownRenderer(
         // 移除 <p> 标签包裹（marked 会给列表项内容加 <p> 标签）
         content = content.replace(/^<p[^>]*>([\s\S]*)<\/p>$/i, '$1').trim();
 
-        // 微信不支持 list-style，需要手动添加项目符号
-        if (token.ordered) {
-          // 有序列表：添加数字序号
-          const bulletStyle = `color: ${primaryColor}; font-weight: 600; margin-right: 6px;`;
-          return `<li style="${liBaseStyle}"><span style="${bulletStyle}">${index + 1}.</span>${content}</li>`;
-        } else {
-          // 无序列表：添加圆点符号
-          const bulletStyle = `color: ${primaryColor}; margin-right: 8px;`;
-          return `<li style="${liBaseStyle}"><span style="${bulletStyle}">•</span>${content}</li>`;
-        }
+        const marker = token.ordered ? `${index + 1}.` : "•";
+        const markerStyle = token.ordered
+          ? `display: inline; color: ${primaryColor}; font-weight: 600; margin-right: 8px;`
+          : `display: inline; color: ${primaryColor}; margin-right: 8px;`;
+        const contentStyle = "display: inline;";
+
+        return `<p data-list-item="${listType}" style="${itemStyle}"><span style="${markerStyle}">${marker} </span><span style="${contentStyle}">${content}</span></p>`;
       })
       .join("");
-    return `<${tag} style="${listStyle}">${body}</${tag}>`;
+    return `<section data-list="${listType}" style="${listStyle}">${body}</section>`;
   };
 
   // 图片
@@ -687,6 +685,81 @@ function stripOuterParagraph(html: string): string {
   return html.trim().replace(/^<p([^>]*)>([\s\S]*)<\/p>$/i, "<span$1>$2</span>");
 }
 
+const dividerStyleIds = dividerStyleOptions.map((style) => style.id).join("|");
+const dividerBlockPattern = new RegExp(
+  `^:::(${dividerStyleIds})[ \\t]*\\n:::[ \\t]*$`,
+  "gm"
+);
+
+function getDividerName(id: DividerStyleId): string {
+  return id.replace(/^divider-/, "");
+}
+
+function renderDividerBlock(
+  id: DividerStyleId,
+  theme: Theme,
+  customStyles?: CustomStyles
+): string {
+  const primaryColor = getPrimaryColor(theme, customStyles);
+  const lightColor = colorToRgba(primaryColor, 0.2);
+  const softColor = colorToRgba(primaryColor, 0.12);
+  const baseStyle = "margin: 20px 0; padding: 4px 0; text-align: center; line-height: 1;";
+  const dotStyle = (color: string) =>
+    `display: inline-block; width: 5px; height: 5px; margin: 0 12px; border-radius: 999px; background: ${color}; vertical-align: middle;`;
+  const lineStyle = (width: string, background: string) =>
+    `display: inline-block; width: ${width}; height: 1px; background: ${background}; vertical-align: middle;`;
+
+  if (id === "divider-star-candy") {
+    const starStyle = (color: string) =>
+      `display: inline-block; margin: 0 10px; color: ${color}; font-size: 18px; line-height: 1; vertical-align: middle;`;
+
+    return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${starStyle("#f9d86e")}">✦</span><span style="${dotStyle("#f7a6bf")}"></span><span style="${starStyle("#ef8fa5")}">✦</span><span style="${dotStyle("#f4d982")}"></span><span style="${starStyle("#f9d86e")}">✦</span><span style="${dotStyle("#c8b6ff")}"></span><span style="${starStyle("#b799e8")}">✦</span></section>`;
+  }
+
+  if (id === "divider-flower-leaf") {
+    const flowerStyle = "display: inline-block; margin: 0 11px; color: #f28aa8; font-size: 18px; line-height: 1; vertical-align: middle;";
+    const leafStyle = "display: inline-block; width: 5px; height: 9px; margin: 0 5px; border-radius: 999px 0 999px 0; background: #9ccf90; transform: rotate(35deg); vertical-align: middle;";
+
+    return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${flowerStyle}">✿</span><span style="${leafStyle}"></span><span style="${flowerStyle}">✿</span><span style="${leafStyle}"></span><span style="${flowerStyle}">✿</span><span style="${leafStyle}"></span><span style="${flowerStyle}">✿</span></section>`;
+  }
+
+  if (id === "divider-heart-dot") {
+    const heartStyle = `display: inline-block; margin: 0 12px; color: ${primaryColor}; font-size: 18px; line-height: 1; vertical-align: middle;`;
+
+    return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${heartStyle}">♡</span><span style="${dotStyle(lightColor)}"></span><span style="${heartStyle}">♡</span><span style="${dotStyle(lightColor)}"></span><span style="${heartStyle}">♡</span><span style="${dotStyle(lightColor)}"></span><span style="${heartStyle}">♡</span></section>`;
+  }
+
+  if (id === "divider-soft-line") {
+    return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${lineStyle("74%", `linear-gradient(to right, transparent, ${lightColor}, ${primaryColor}, ${lightColor}, transparent)`)}"></span></section>`;
+  }
+
+  if (id === "divider-dot-line") {
+    return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${lineStyle("32%", `linear-gradient(to right, transparent, ${lightColor})`)}"></span><span style="display: inline-block; width: 5px; height: 5px; margin: 0 10px; border-radius: 999px; background: ${primaryColor}; vertical-align: middle;"></span><span style="${lineStyle("32%", `linear-gradient(to left, transparent, ${lightColor})`)}"></span></section>`;
+  }
+
+  if (id === "divider-double-line") {
+    const doubleLineStyle = `display: block; width: 72%; height: 1px; margin: 0 auto 5px; background: linear-gradient(to right, transparent, ${lightColor}, transparent);`;
+
+    return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${doubleLineStyle}"></span><span style="${doubleLineStyle.replace("margin: 0 auto 5px", "margin: 0 auto")}"></span></section>`;
+  }
+
+  if (id === "divider-dash-line") {
+    return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${lineStyle("72%", `repeating-linear-gradient(to right, ${primaryColor} 0 7px, transparent 7px 15px)`)} opacity: 0.75;"></span></section>`;
+  }
+
+  return `<section data-divider="${getDividerName(id)}" style="${baseStyle}"><span style="${lineStyle("30%", softColor)}"></span><span style="display: inline-block; width: 7px; height: 7px; margin: 0 12px; background: ${primaryColor}; transform: rotate(45deg); vertical-align: middle;"></span><span style="${lineStyle("30%", softColor)}"></span></section>`;
+}
+
+function renderDividerBlocks(
+  markdown: string,
+  theme: Theme,
+  customStyles?: CustomStyles
+): string {
+  return markdown.replace(dividerBlockPattern, (_match, id: DividerStyleId) =>
+    renderDividerBlock(id, theme, customStyles)
+  );
+}
+
 type LayoutBlockType =
   | "card"
   | "tip"
@@ -912,8 +985,13 @@ export function parseMarkdown(
 
   // 预处理 Markdown，修复常见格式问题
   const processedMarkdown = preprocessMarkdown(markdown);
-  const markdownWithLayoutComponents = renderLayoutComponentBlocks(
+  const markdownWithDividerBlocks = renderDividerBlocks(
     processedMarkdown,
+    theme,
+    customStyles
+  );
+  const markdownWithLayoutComponents = renderLayoutComponentBlocks(
+    markdownWithDividerBlocks,
     theme,
     customStyles
   );

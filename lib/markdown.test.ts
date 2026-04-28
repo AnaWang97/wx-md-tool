@@ -22,6 +22,49 @@ describe("parseMarkdown", () => {
     expect(html).toContain(themes[0].preview);
   });
 
+  it("renders ordered lists as WeChat-safe inline numbered paragraphs", () => {
+    const html = parseMarkdown(
+      "1. 它告诉 AI 你想让它扮演什么角色。\n2. 它告诉 AI 你想要什么结果。\n3. 它告诉 AI 输出的时候要遵守什么边界。",
+      themes[0]
+    );
+
+    expect(html).toContain('data-list="ordered"');
+    expect(html).toContain('data-list-item="ordered"');
+    expect(html).toContain(">1. </span><span");
+    expect(html).toContain("它告诉 AI 你想让它扮演什么角色。");
+    expect(html).not.toContain("<ol");
+    expect(html).not.toContain("<li");
+  });
+
+  it("keeps the default horizontal rule unchanged", () => {
+    const html = parseMarkdown("---", themes[0]);
+
+    expect(html).toContain(`<hr style="${themes[0].styles.hr}" />`);
+    expect(html).not.toContain("data-divider");
+  });
+
+  it("renders decorative divider blocks without replacing the default hr", () => {
+    const html = parseMarkdown(":::divider-star-candy\n:::", themes[0]);
+
+    expect(html).toContain('data-divider="star-candy"');
+    expect(html).toContain("#f9d86e");
+    expect(html).not.toContain("<hr");
+  });
+
+  it("renders theme-following divider blocks with the active primary color", () => {
+    const html = parseMarkdown(":::divider-heart-dot\n:::", themes[0], {
+      primaryColor: "#ec4899",
+      fontSize: 16,
+      titleFontSize: 22,
+      lineHeight: 1.75,
+      paragraphIndent: false,
+      codeTheme: "github-dark",
+    });
+
+    expect(html).toContain('data-divider="heart-dot"');
+    expect(html).toContain("#ec4899");
+  });
+
   it("renders a horizontal rule after a bold sentence without needing a blank line", () => {
     const html = parseMarkdown(
       "**我的答案是：不一定。**\n---\n## 下一节",

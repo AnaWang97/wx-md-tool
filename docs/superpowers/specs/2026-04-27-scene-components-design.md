@@ -8,11 +8,15 @@ Upgrade the current generic layout components into WeChat article scene componen
 
 The current component menu mainly inserts neutral formatting blocks such as "card" and "tip". That is technically useful, but the user still has to decide how each block should function in an article.
 
-The upgraded menu should speak in publishing scenarios:
+The upgraded menu should speak in publishing scenarios. Quote styles are grouped under a first-level `金句卡片` submenu, with `简约经典` first:
 
-- `金句卡片`: turn a sentence into a polished quote card.
-- `居中金句`: turn a sentence into a centered showcase quote.
-- `侧栏金句`: turn a sentence into a left-accent quote block.
+- `简约经典`: turn a sentence into the default polished quote card.
+- `对话框`: turn a sentence into a speech-bubble quote.
+- `柔和椭圆`: turn a sentence into a soft oval quote.
+- `星芒线框`: turn a sentence into a star-and-line quote.
+- `横线爱心`: turn a sentence into a horizontal-line quote.
+- `圆角边框`: turn a sentence into a rounded frame quote.
+- `浅色刷痕`: turn a sentence into a soft brush-background quote.
 - `核心观点`: turn selected text into a key opinion card.
 - `步骤清单`: turn selected lines into numbered steps, or insert a three-step starter.
 - `避坑提醒`: turn selected text into a warning/tip block.
@@ -28,6 +32,7 @@ Keep the existing pink, fresh visual style. Keep the toolbar location so the use
 Change the mental model of the dropdown:
 
 - The toolbar button remains short, such as `组件`.
+- Quote styles appear inside a second-level `金句卡片` submenu so the main component list stays scannable.
 - Each menu item uses a scenario label plus a short practical description.
 - The descriptions should explain when to use the module, not what markup it inserts.
 - If text is selected, the selected text is carried into the most important part of the component.
@@ -37,9 +42,13 @@ Change the mental model of the dropdown:
 
 The templates should favor WeChat article writing language over generic placeholders:
 
-- `金句卡片`: `:::quote-card` with selected text as a polished quote card.
-- `居中金句`: `:::quote-center` with selected text as a centered showcase quote.
-- `侧栏金句`: `:::quote-side` with selected text as a compact left-accent quote.
+- `简约经典`: `:::quote-card` with selected text as the default polished quote card.
+- `对话框`: `:::quote-bubble` with selected text as a speech-bubble quote.
+- `柔和椭圆`: `:::quote-oval` with selected text as a soft oval quote.
+- `星芒线框`: `:::quote-star` with selected text as a star-and-line quote.
+- `横线爱心`: `:::quote-line` with selected text as a horizontal-line quote.
+- `圆角边框`: `:::quote-frame` with selected text as a rounded frame quote.
+- `浅色刷痕`: `:::quote-brush` with selected text as a soft brush-background quote.
 - `核心观点`: `:::card` with title `核心观点` and selected text as the body.
 - `步骤清单`: plain Markdown numbered list. If the selected text has multiple non-empty lines, each line becomes one step. Otherwise insert three editable steps.
 - `避坑提醒`: `:::tip` with title `避坑提醒` and selected text as the body.
@@ -50,7 +59,7 @@ The templates should favor WeChat article writing language over generic placehol
 
 Reuse the existing renderer:
 
-- `:::card`, `:::tip`, and `:::cta` already render as styled blocks.
+- `:::card`, `:::tip`, `:::cta`, and `:::quote-*` blocks render as styled blocks.
 - Quote and numbered-list components should rely on normal Markdown rendering.
 - No new backend, AI call, persistence, or network dependency is needed.
 
@@ -67,6 +76,6 @@ Add focused tests for:
 ## Out Of Scope
 
 - AI rewriting or automatic semantic classification.
-- Multiple visual styles per component.
+- A modal visual picker with live previews.
 - Modal configuration before insertion.
 - Changing the overall page theme.

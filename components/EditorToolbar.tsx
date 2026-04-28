@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { layoutComponents, type LayoutComponentId } from "@/lib/layout-components";
+import {
+  articleComponents,
+  quoteComponents,
+  type LayoutComponentId,
+} from "@/lib/layout-components";
 
 interface ToolbarProps {
   onInsert: (before: string, after?: string, defaultText?: string) => void;
@@ -22,6 +26,7 @@ export default function EditorToolbar({
   onInsertComponent,
 }: ToolbarProps) {
   const [isComponentMenuOpen, setIsComponentMenuOpen] = useState(false);
+  const [isQuoteMenuOpen, setIsQuoteMenuOpen] = useState(false);
   const componentMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,6 +38,7 @@ export default function EditorToolbar({
         !componentMenuRef.current.contains(event.target as Node)
       ) {
         setIsComponentMenuOpen(false);
+        setIsQuoteMenuOpen(false);
       }
     };
 
@@ -216,7 +222,10 @@ export default function EditorToolbar({
       <div className="flex items-center px-2 py-1.5 border-l border-pink-100 bg-white/95">
         <div ref={componentMenuRef} className="relative flex items-center">
           <button
-            onClick={() => setIsComponentMenuOpen((open) => !open)}
+            onClick={() => {
+              if (isComponentMenuOpen) setIsQuoteMenuOpen(false);
+              setIsComponentMenuOpen((open) => !open);
+            }}
             title="排版组件"
             className="px-2.5 h-7 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1 text-xs font-medium whitespace-nowrap"
           >
@@ -237,12 +246,64 @@ export default function EditorToolbar({
                 先选中文字，再点组件；未选择时插入模板
               </p>
             </div>
-            {layoutComponents.map((component) => (
+            <button
+              onClick={() => setIsQuoteMenuOpen((open) => !open)}
+              className="w-full px-3 py-2.5 text-left hover:bg-pink-50 flex items-center gap-3 transition-colors"
+            >
+              <span className="w-7 h-7 rounded-lg bg-pink-50 text-purple-500 flex items-center justify-center text-xs font-bold">
+                句
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm text-purple-700 font-medium">
+                  金句卡片
+                </span>
+                <span className="block text-xs text-pink-400 truncate">
+                  选择一种金句展示样式
+                </span>
+              </span>
+              <span className={`text-xs text-purple-400 transition-transform ${isQuoteMenuOpen ? "rotate-90" : ""}`}>
+                ▸
+              </span>
+            </button>
+
+            <div
+              aria-hidden={!isQuoteMenuOpen}
+              className={`border-y border-pink-100 bg-pink-50/40 py-1 ${
+                isQuoteMenuOpen ? "" : "hidden"
+              }`}
+            >
+              {quoteComponents.map((component) => (
+                <button
+                  key={component.id}
+                  onClick={() => {
+                    onInsertComponent(component.id);
+                    setIsComponentMenuOpen(false);
+                    setIsQuoteMenuOpen(false);
+                  }}
+                  className="w-full py-2 pl-8 pr-3 text-left hover:bg-white/80 flex items-center gap-2 transition-colors"
+                >
+                  <span className="w-6 h-6 rounded-md bg-white text-purple-500 flex items-center justify-center text-[11px] font-bold">
+                    {component.icon}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm text-purple-700 font-medium">
+                      {component.label}
+                    </span>
+                    <span className="block text-xs text-pink-400 truncate">
+                      {component.description}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {articleComponents.map((component) => (
               <button
                 key={component.id}
                 onClick={() => {
                   onInsertComponent(component.id);
                   setIsComponentMenuOpen(false);
+                  setIsQuoteMenuOpen(false);
                 }}
                 className="w-full px-3 py-2.5 text-left hover:bg-pink-50 flex items-center gap-3 transition-colors"
               >

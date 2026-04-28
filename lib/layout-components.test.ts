@@ -1,16 +1,21 @@
 import { describe, expect, it } from "vitest";
 import {
   createLayoutComponentTemplate,
+  quoteComponents,
   layoutComponents,
   type LayoutComponentId,
 } from "./layout-components";
 
 describe("layoutComponents", () => {
-  it("defines scene components with three quote showcase styles", () => {
+  it("defines scene components with quote styles first", () => {
     expect(layoutComponents.map((item) => item.id)).toEqual([
       "quote-card",
-      "quote-center",
-      "quote-side",
+      "quote-bubble",
+      "quote-oval",
+      "quote-star",
+      "quote-line",
+      "quote-frame",
+      "quote-brush",
       "key-point",
       "step-list",
       "warning-tip",
@@ -19,9 +24,13 @@ describe("layoutComponents", () => {
     ]);
 
     expect(layoutComponents.map((item) => item.label)).toEqual([
-      "金句卡片",
-      "居中金句",
-      "侧栏金句",
+      "简约经典",
+      "对话框",
+      "柔和椭圆",
+      "星芒线框",
+      "横线爱心",
+      "圆角边框",
+      "浅色刷痕",
       "核心观点",
       "步骤清单",
       "避坑提醒",
@@ -30,16 +39,24 @@ describe("layoutComponents", () => {
     ]);
   });
 
+  it("keeps classic quote style at the top of the quote submenu", () => {
+    expect(quoteComponents.map((item) => item.label)).toEqual([
+      "简约经典",
+      "对话框",
+      "柔和椭圆",
+      "星芒线框",
+      "横线爱心",
+      "圆角边框",
+      "浅色刷痕",
+    ]);
+  });
+
   it("creates distinct quote showcase templates with selected text", () => {
-    expect(createLayoutComponentTemplate("quote-card", "先让读者扫得懂")).toContain(
-      ":::quote-card\n先让读者扫得懂\n:::"
-    );
-    expect(createLayoutComponentTemplate("quote-center", "先让读者扫得懂")).toContain(
-      ":::quote-center\n先让读者扫得懂\n:::"
-    );
-    expect(createLayoutComponentTemplate("quote-side", "先让读者扫得懂")).toContain(
-      ":::quote-side\n先让读者扫得懂\n:::"
-    );
+    for (const component of quoteComponents) {
+      expect(createLayoutComponentTemplate(component.id, "先让读者扫得懂")).toContain(
+        `:::${component.id}\n先让读者扫得懂\n:::`
+      );
+    }
   });
 
   it("creates a key point card with selected text as body content", () => {
@@ -73,8 +90,12 @@ describe("layoutComponents", () => {
   it("creates readable default templates for every component", () => {
     const ids: LayoutComponentId[] = [
       "quote-card",
-      "quote-center",
-      "quote-side",
+      "quote-bubble",
+      "quote-oval",
+      "quote-star",
+      "quote-line",
+      "quote-frame",
+      "quote-brush",
       "key-point",
       "step-list",
       "warning-tip",

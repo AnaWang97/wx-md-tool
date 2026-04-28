@@ -16,8 +16,14 @@ describe("EditorToolbar", () => {
     expect(html).toContain("排版组件");
     expect(html).toContain("先选中文字，再点组件；未选择时插入模板");
     expect(html).toContain("金句卡片");
-    expect(html).toContain("居中金句");
-    expect(html).toContain("侧栏金句");
+    expect(html).toContain("选择一种金句展示样式");
+    expect(html).toContain("简约经典");
+    expect(html).toContain("对话框");
+    expect(html).toContain("柔和椭圆");
+    expect(html).toContain("星芒线框");
+    expect(html).toContain("横线爱心");
+    expect(html).toContain("圆角边框");
+    expect(html).toContain("浅色刷痕");
     expect(html).toContain("核心观点");
     expect(html).toContain("步骤清单");
     expect(html).toContain("避坑提醒");

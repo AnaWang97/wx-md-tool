@@ -1,7 +1,11 @@
 export type LayoutComponentId =
   | "quote-card"
-  | "quote-center"
-  | "quote-side"
+  | "quote-bubble"
+  | "quote-oval"
+  | "quote-star"
+  | "quote-line"
+  | "quote-frame"
+  | "quote-brush"
   | "key-point"
   | "step-list"
   | "warning-tip"
@@ -46,34 +50,72 @@ const createSummaryTemplate = (selectedText?: string) => {
 };
 
 const createQuoteTemplate = (
-  type: "quote-card" | "quote-center" | "quote-side",
+  type:
+    | "quote-card"
+    | "quote-bubble"
+    | "quote-oval"
+    | "quote-star"
+    | "quote-line"
+    | "quote-frame"
+    | "quote-brush",
   selectedText?: string
 ) => `:::${type}
 ${cleanSelectedText(selectedText) || "这里写一句最想让读者记住的话"}
 :::`;
 
-export const layoutComponents: LayoutComponent[] = [
+export const quoteComponents: LayoutComponent[] = [
   {
     id: "quote-card",
-    label: "金句卡片",
-    description: "选一句话变精致卡片",
-    icon: "句",
+    label: "简约经典",
+    description: "基础金句卡片",
+    icon: "简",
     createTemplate: (selectedText) => createQuoteTemplate("quote-card", selectedText),
   },
   {
-    id: "quote-center",
-    label: "居中金句",
-    description: "选一句话变留白展示",
-    icon: "中",
-    createTemplate: (selectedText) => createQuoteTemplate("quote-center", selectedText),
+    id: "quote-bubble",
+    label: "对话框",
+    description: "边框气泡样式",
+    icon: "框",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-bubble", selectedText),
   },
   {
-    id: "quote-side",
-    label: "侧栏金句",
-    description: "选一句话变左线强调",
-    icon: "引",
-    createTemplate: (selectedText) => createQuoteTemplate("quote-side", selectedText),
+    id: "quote-oval",
+    label: "柔和椭圆",
+    description: "浅色椭圆背景",
+    icon: "椭",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-oval", selectedText),
   },
+  {
+    id: "quote-star",
+    label: "星芒线框",
+    description: "星星和细线点缀",
+    icon: "星",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-star", selectedText),
+  },
+  {
+    id: "quote-line",
+    label: "横线爱心",
+    description: "横线和小爱心装饰",
+    icon: "心",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-line", selectedText),
+  },
+  {
+    id: "quote-frame",
+    label: "圆角边框",
+    description: "细线圆角框",
+    icon: "框",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-frame", selectedText),
+  },
+  {
+    id: "quote-brush",
+    label: "浅色刷痕",
+    description: "柔和笔刷底色",
+    icon: "刷",
+    createTemplate: (selectedText) => createQuoteTemplate("quote-brush", selectedText),
+  },
+];
+
+export const articleComponents: LayoutComponent[] = [
   {
     id: "key-point",
     label: "核心观点",
@@ -122,6 +164,11 @@ ${cleanSelectedText(selectedText) || "下次需要写同类内容时，可以直
 [关注我，继续看更多实用内容](#)
 :::`,
   },
+];
+
+export const layoutComponents: LayoutComponent[] = [
+  ...quoteComponents,
+  ...articleComponents,
 ];
 
 export function createLayoutComponentTemplate(

@@ -34,24 +34,33 @@ describe("layout component Markdown blocks", () => {
     expect(html).toContain("了解更多");
   });
 
-  it("renders three quote showcase block styles", () => {
+  it("renders quote showcase block styles", () => {
     const cardHtml = parseMarkdown(":::quote-card\n先让读者扫得懂\n:::", themes[0]);
-    const centerHtml = parseMarkdown(":::quote-center\n先让读者扫得懂\n:::", themes[0]);
-    const sideHtml = parseMarkdown(":::quote-side\n先让读者扫得懂\n:::", themes[0]);
+    const bubbleHtml = parseMarkdown(":::quote-bubble\n先让读者扫得懂\n:::", themes[0]);
+    const ovalHtml = parseMarkdown(":::quote-oval\n先让读者扫得懂\n:::", themes[0]);
+    const starHtml = parseMarkdown(":::quote-star\n先让读者扫得懂\n:::", themes[0]);
+    const lineHtml = parseMarkdown(":::quote-line\n先让读者扫得懂\n:::", themes[0]);
+    const frameHtml = parseMarkdown(":::quote-frame\n先让读者扫得懂\n:::", themes[0]);
+    const brushHtml = parseMarkdown(":::quote-brush\n先让读者扫得懂\n:::", themes[0]);
 
     expect(cardHtml).toContain('data-layout-component="quote-card"');
-    expect(centerHtml).toContain('data-layout-component="quote-center"');
-    expect(sideHtml).toContain('data-layout-component="quote-side"');
+    expect(bubbleHtml).toContain('data-layout-component="quote-bubble"');
+    expect(ovalHtml).toContain('data-layout-component="quote-oval"');
+    expect(starHtml).toContain('data-layout-component="quote-star"');
+    expect(lineHtml).toContain('data-layout-component="quote-line"');
+    expect(frameHtml).toContain('data-layout-component="quote-frame"');
+    expect(brushHtml).toContain('data-layout-component="quote-brush"');
     expect(cardHtml).toContain("先让读者扫得懂");
     expect(cardHtml).toContain("font-size: inherit");
     expect(cardHtml).toContain("text-align: left");
     expect(cardHtml).toContain("text-align: right");
     expect(cardHtml).not.toContain("font-size: 17px");
-    expect(centerHtml).toContain("text-align: center");
-    expect(centerHtml).toContain("text-align: left");
-    expect(centerHtml).toContain("text-align: right");
-    expect(centerHtml).not.toContain("“ ”");
-    expect(sideHtml).toContain("border-left");
+    expect(bubbleHtml).toContain("transform: rotate(45deg)");
+    expect(ovalHtml).toContain("border-radius: 999px");
+    expect(starHtml).toContain("✦");
+    expect(lineHtml).toContain("♥");
+    expect(frameHtml).toContain("border-radius: 22px");
+    expect(brushHtml).toContain("linear-gradient(100deg");
   });
 
   it("uses custom primary color when custom styles are active", () => {

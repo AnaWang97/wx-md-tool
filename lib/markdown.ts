@@ -581,6 +581,12 @@ type LayoutBlockType =
   | "tip"
   | "cta"
   | "quote-card"
+  | "quote-bubble"
+  | "quote-oval"
+  | "quote-star"
+  | "quote-line"
+  | "quote-frame"
+  | "quote-brush"
   | "quote-center"
   | "quote-side";
 
@@ -591,9 +597,11 @@ function renderLayoutComponentBlocks(
 ): string {
   const primaryColor = getPrimaryColor(theme, customStyles);
   const lightColor = colorToRgba(primaryColor, 0.1);
+  const mediumColor = colorToRgba(primaryColor, 0.28);
+  const softColor = colorToRgba(primaryColor, 0.07);
 
   return markdown.replace(
-    /^:::(card|tip|cta|quote-card|quote-center|quote-side)[ \t]*\n([\s\S]*?)\n:::[ \t]*$/gm,
+    /^:::(card|tip|cta|quote-card|quote-bubble|quote-oval|quote-star|quote-line|quote-frame|quote-brush|quote-center|quote-side)[ \t]*\n([\s\S]*?)\n:::[ \t]*$/gm,
     (_match, type: LayoutBlockType, body: string) => {
       const trimmedBody = body.trim();
       const quoteHtml = stripOuterParagraph(marked.parse(trimmedBody) as string);
@@ -605,6 +613,61 @@ function renderLayoutComponentBlocks(
         const textStyle = `margin: 0; color: #3f3f3f; font-size: inherit; line-height: 1.85; font-weight: 600;`;
 
         return `<section data-layout-component="quote-card" style="${style}"><p style="${openMarkStyle}">“</p><p style="${textStyle}">${quoteHtml}</p><p style="${closeMarkStyle}">”</p></section>`;
+      }
+
+      if (type === "quote-bubble") {
+        const style = `position: relative; margin: 28px 0 34px; padding: 22px 24px; border: 1px solid ${primaryColor}; border-radius: 10px; background: #fff;`;
+        const openMarkStyle = `position: absolute; left: 16px; top: -14px; padding: 0 6px; background: #fff; color: ${primaryColor}; font-size: 24px; line-height: 1; font-weight: 700;`;
+        const closeMarkStyle = `position: absolute; right: 16px; bottom: -14px; padding: 0 6px; background: #fff; color: ${primaryColor}; font-size: 24px; line-height: 1; font-weight: 700;`;
+        const pointerStyle = `position: absolute; left: 46%; bottom: -8px; width: 14px; height: 14px; background: #fff; border-right: 1px solid ${primaryColor}; border-bottom: 1px solid ${primaryColor}; transform: rotate(45deg);`;
+        const textStyle = `margin: 0; text-align: center; color: #3f3f3f; font-size: inherit; line-height: 1.85; font-weight: 600;`;
+
+        return `<section data-layout-component="quote-bubble" style="${style}"><span style="${openMarkStyle}">“</span><p style="${textStyle}">${quoteHtml}</p><span style="${closeMarkStyle}">”</span><span style="${pointerStyle}"></span></section>`;
+      }
+
+      if (type === "quote-oval") {
+        const style = `margin: 28px auto; padding: 24px 34px; max-width: 86%; text-align: center; border-radius: 999px; background: linear-gradient(135deg, ${softColor}, #fff 72%); color: #6b4b35;`;
+        const markStyle = `margin: 0 0 8px; color: ${primaryColor}; font-size: 22px; line-height: 1; font-weight: 700;`;
+        const lineStyle = `display: inline-block; width: 42px; height: 1px; margin: 0 10px 5px; background: ${mediumColor};`;
+        const textStyle = `margin: 0; font-size: inherit; line-height: 1.85; font-weight: 600;`;
+
+        return `<section data-layout-component="quote-oval" style="${style}"><p style="${markStyle}">“ <span style="${lineStyle}"></span>•<span style="${lineStyle}"></span></p><p style="${textStyle}">${quoteHtml}</p><p style="${markStyle}"><span style="${lineStyle}"></span>•<span style="${lineStyle}"></span> ”</p></section>`;
+      }
+
+      if (type === "quote-star") {
+        const style = `margin: 30px 0; padding: 20px 16px; text-align: center; color: #3f3f3f;`;
+        const decoStyle = `margin: 0 auto 10px; color: ${primaryColor}; font-size: 18px; line-height: 1.5; letter-spacing: 4px;`;
+        const textStyle = `margin: 0 auto; color: #3f3f3f; font-size: inherit; line-height: 1.85; font-weight: 600;`;
+
+        return `<section data-layout-component="quote-star" style="${style}"><p style="${decoStyle}">✦ —— “ —— ✦</p><p style="${textStyle}">${quoteHtml}</p><p style="${decoStyle}">✦ —— ” —— ✦</p></section>`;
+      }
+
+      if (type === "quote-line") {
+        const style = `margin: 28px 0; padding: 18px 16px; text-align: center;`;
+        const lineStyle = `display: inline-block; width: 92px; height: 1px; margin: 0 14px 6px; background: ${mediumColor};`;
+        const markStyle = `margin: 0 0 10px; color: ${primaryColor}; font-size: 22px; line-height: 1; font-weight: 700;`;
+        const textStyle = `margin: 0; color: #3f3f3f; font-size: inherit; line-height: 1.85; font-weight: 600;`;
+        const footerStyle = `margin: 12px 0 0; color: ${primaryColor}; font-size: 14px; letter-spacing: 4px;`;
+
+        return `<section data-layout-component="quote-line" style="${style}"><p style="${markStyle}"><span style="${lineStyle}"></span>“<span style="${lineStyle}"></span></p><p style="${textStyle}">${quoteHtml}</p><p style="${footerStyle}">• ♥ •</p></section>`;
+      }
+
+      if (type === "quote-frame") {
+        const style = `margin: 26px 0; padding: 22px 28px; text-align: center; border: 1px solid ${primaryColor}; border-radius: 22px; background: #fff; color: #3f3f3f;`;
+        const textStyle = `margin: 0; font-size: inherit; line-height: 1.85; font-weight: 600;`;
+        const markStyle = `display: inline-block; color: ${primaryColor}; font-size: 22px; font-weight: 700; line-height: 1; vertical-align: middle;`;
+        const starStyle = `color: ${primaryColor}; font-size: 16px; padding: 0 12px;`;
+
+        return `<section data-layout-component="quote-frame" style="${style}"><p style="margin: 0 0 10px;"><span style="${markStyle}">“</span><span style="${starStyle}">✦</span></p><p style="${textStyle}">${quoteHtml}</p><p style="margin: 10px 0 0;"><span style="${starStyle}">✦</span><span style="${markStyle}">”</span></p></section>`;
+      }
+
+      if (type === "quote-brush") {
+        const style = `margin: 26px 0; padding: 22px 26px; background: linear-gradient(100deg, transparent 0%, ${lightColor} 8%, ${softColor} 88%, transparent 100%); border-radius: 26px 14px 28px 12px;`;
+        const openMarkStyle = `margin: 0 0 6px; text-align: left; color: ${primaryColor}; font-size: 22px; line-height: 1; font-weight: 700;`;
+        const closeMarkStyle = `margin: 6px 0 0; text-align: right; color: ${primaryColor}; font-size: 22px; line-height: 1; font-weight: 700;`;
+        const textStyle = `margin: 0; color: #3f3f3f; font-size: inherit; line-height: 1.85; font-weight: 600;`;
+
+        return `<section data-layout-component="quote-brush" style="${style}"><p style="${openMarkStyle}">“</p><p style="${textStyle}">${quoteHtml}</p><p style="${closeMarkStyle}">”</p></section>`;
       }
 
       if (type === "quote-center") {

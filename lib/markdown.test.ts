@@ -13,12 +13,12 @@ describe("parseMarkdown", () => {
     expect(html).toContain("正文内容");
   });
 
-  it("renders blockquotes with a lightweight quote mark", () => {
+  it("renders blockquotes without extra quote marks", () => {
     const html = parseMarkdown("> 普通引用内容", themes[0]);
 
     expect(html).toContain("<blockquote");
     expect(html).toContain("普通引用内容");
-    expect(html).toContain("aria-hidden=\"true\"");
+    expect(html).not.toContain("aria-hidden=\"true\"");
     expect(html).toContain(themes[0].preview);
   });
 });

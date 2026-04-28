@@ -9,6 +9,7 @@ describe("EditorToolbar", () => {
         onInsert={() => undefined}
         onWrap={() => undefined}
         onInsertComponent={() => undefined}
+        onClearComponent={() => undefined}
       />
     );
 
@@ -31,5 +32,21 @@ describe("EditorToolbar", () => {
     expect(html).toContain("关注引导");
     expect(html).toContain("overflow-visible");
     expect(html).toContain("right-0 top-full");
+  });
+
+  it("shows current component actions when the cursor is inside a component", () => {
+    const html = renderToStaticMarkup(
+      <EditorToolbar
+        activeComponent={{ type: "quote-bubble", label: "对话框" }}
+        onInsert={() => undefined}
+        onWrap={() => undefined}
+        onInsertComponent={() => undefined}
+        onClearComponent={() => undefined}
+      />
+    );
+
+    expect(html).toContain("当前组件");
+    expect(html).toContain("当前：对话框");
+    expect(html).toContain("取消组件");
   });
 });

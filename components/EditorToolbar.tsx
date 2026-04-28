@@ -6,11 +6,17 @@ import {
   quoteComponents,
   type LayoutComponentId,
 } from "@/lib/layout-components";
+import type { LayoutComponentBlockType } from "@/lib/layout-component-block";
 
 interface ToolbarProps {
   onInsert: (before: string, after?: string, defaultText?: string) => void;
   onWrap: (prefix: string, suffix: string, defaultText?: string) => void;
   onInsertComponent: (id: LayoutComponentId) => void;
+  onClearComponent: () => void;
+  activeComponent?: {
+    type: LayoutComponentBlockType;
+    label: string;
+  } | null;
 }
 
 interface ToolButton {
@@ -24,6 +30,8 @@ export default function EditorToolbar({
   onInsert,
   onWrap,
   onInsertComponent,
+  onClearComponent,
+  activeComponent,
 }: ToolbarProps) {
   const [isComponentMenuOpen, setIsComponentMenuOpen] = useState(false);
   const [isQuoteMenuOpen, setIsQuoteMenuOpen] = useState(false);
@@ -223,8 +231,13 @@ export default function EditorToolbar({
         <div ref={componentMenuRef} className="relative flex items-center">
           <button
             onClick={() => {
-              if (isComponentMenuOpen) setIsQuoteMenuOpen(false);
-              setIsComponentMenuOpen((open) => !open);
+              setIsComponentMenuOpen((open) => {
+                const nextOpen = !open;
+                setIsQuoteMenuOpen(
+                  nextOpen && Boolean(activeComponent?.type.startsWith("quote-"))
+                );
+                return nextOpen;
+              });
             }}
             title="排版组件"
             className="px-2.5 h-7 rounded-lg hover:bg-pink-100 text-purple-600 hover:text-purple-800 transition-colors flex items-center gap-1 text-xs font-medium whitespace-nowrap"
@@ -243,9 +256,33 @@ export default function EditorToolbar({
           >
             <div className="px-3 py-2 border-b border-pink-100 bg-pink-50/70">
               <p className="text-[11px] leading-relaxed text-purple-500">
-                先选中文字，再点组件；未选择时插入模板
+                {activeComponent
+                  ? "当前组件可换样式，也可以一键取消"
+                  : "先选中文字，再点组件；未选择时插入模板"}
               </p>
             </div>
+            {activeComponent && (
+              <div className="border-b border-pink-100 bg-white px-3 py-2">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <span className="text-xs font-medium text-purple-600">
+                    当前组件
+                  </span>
+                  <span className="rounded-full bg-purple-50 px-2 py-0.5 text-[11px] text-purple-500">
+                    当前：{activeComponent.label}
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    onClearComponent();
+                    setIsComponentMenuOpen(false);
+                    setIsQuoteMenuOpen(false);
+                  }}
+                  className="w-full rounded-lg border border-pink-100 bg-pink-50/80 px-3 py-2 text-left text-xs font-medium text-pink-500 hover:bg-pink-100 transition-colors"
+                >
+                  取消组件
+                </button>
+              </div>
+            )}
             <button
               onClick={() => setIsQuoteMenuOpen((open) => !open)}
               className="w-full px-3 py-2.5 text-left hover:bg-pink-50 flex items-center gap-3 transition-colors"
@@ -280,12 +317,14 @@ export default function EditorToolbar({
                     setIsComponentMenuOpen(false);
                     setIsQuoteMenuOpen(false);
                   }}
-                  className="w-full py-2 pl-8 pr-3 text-left hover:bg-white/80 flex items-center gap-2 transition-colors"
+                  className={`w-full py-2 pl-8 pr-3 text-left hover:bg-white/80 flex items-center gap-2 transition-colors ${
+                    activeComponent?.type === component.id ? "bg-white/90" : ""
+                  }`}
                 >
                   <span className="w-6 h-6 rounded-md bg-white text-purple-500 flex items-center justify-center text-[11px] font-bold">
                     {component.icon}
                   </span>
-                  <span className="min-w-0">
+                  <span className="min-w-0 flex-1">
                     <span className="block text-sm text-purple-700 font-medium">
                       {component.label}
                     </span>
@@ -293,6 +332,9 @@ export default function EditorToolbar({
                       {component.description}
                     </span>
                   </span>
+                  {activeComponent?.type === component.id && (
+                    <span className="text-[11px] text-purple-400">当前</span>
+                  )}
                 </button>
               ))}
             </div>

@@ -36,6 +36,8 @@ Change the mental model of the dropdown:
 - Each menu item uses a scenario label plus a short practical description.
 - The descriptions should explain when to use the module, not what markup it inserts.
 - If text is selected, the selected text is carried into the most important part of the component.
+- If the cursor is inside an existing `:::` component block and no text is selected, choosing a component edits the current block instead of nesting a new block.
+- Existing component blocks show a small current-component area with a one-click `取消组件` action.
 - After inserting a component, the cursor lands after the inserted block for quick continued writing.
 
 ## Component Templates
@@ -63,6 +65,15 @@ Reuse the existing renderer:
 - Quote and numbered-list components should rely on normal Markdown rendering.
 - No new backend, AI call, persistence, or network dependency is needed.
 
+## Component Editing
+
+The editor should recognize the block around the current cursor. The first version supports deterministic text transformations:
+
+- Cursor inside `:::quote-*`: selecting another quote style changes only the opening fence, preserving the quote content.
+- Cursor inside `:::card`, `:::tip`, or `:::cta`: selecting another component replaces the whole block with the chosen component template, using the old inner content as the new selected text.
+- Clicking `取消组件`: removes the opening and closing fences and keeps only the inner Markdown content.
+- Selecting explicit text still takes priority over cursor context, so the existing "select text, apply component" workflow remains unchanged.
+
 ## Testing
 
 Add focused tests for:
@@ -72,6 +83,7 @@ Add focused tests for:
 - Multi-line text becoming a numbered step list.
 - Existing layout block rendering remaining stable.
 - Toolbar showing the scene labels.
+- Cursor-aware component replacement and cancellation helpers.
 
 ## Out Of Scope
 

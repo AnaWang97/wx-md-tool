@@ -1,16 +1,20 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useMemo, useState } from "react";
 import {
   htmlToMarkdown,
   hasHtmlContent,
   getHtmlFromClipboard,
 } from "@/lib/html-to-markdown";
 import {
-  createLayoutComponentTemplate,
   type LayoutComponentId,
 } from "@/lib/layout-components";
-import { insertBlockTemplate } from "@/lib/insert-template";
+import {
+  createLayoutComponentEdit,
+  findLayoutComponentBlockAtCursor,
+  getLayoutComponentBlockLabel,
+  unwrapLayoutComponentBlock,
+} from "@/lib/layout-component-block";
 import EditorToolbar from "./EditorToolbar";
 
 interface EditorProps {
@@ -34,6 +38,25 @@ export default function Editor({
 }: EditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isInternalScroll = useRef(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
+
+  const activeComponent = useMemo(() => {
+    const block = findLayoutComponentBlockAtCursor(value, cursorPosition);
+
+    return block
+      ? {
+          type: block.type,
+          label: getLayoutComponentBlockLabel(block.type),
+        }
+      : null;
+  }, [value, cursorPosition]);
+
+  const updateCursorPosition = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    setCursorPosition(textarea.selectionStart);
+  }, []);
 
   // 处理粘贴事件 - 智能识别富文本
   const handlePaste = useCallback(
@@ -145,6 +168,7 @@ export default function Editor({
         const newCursorPos = start + prefix.length + before.length + selectedText.length;
         textarea.focus();
         textarea.setSelectionRange(newCursorPos, newCursorPos);
+        setCursorPosition(newCursorPos);
       }, 0);
     },
     [value, onChange]
@@ -176,6 +200,7 @@ export default function Editor({
           start + prefix.length,
           start + prefix.length + selectedText.length
         );
+        setCursorPosition(start + prefix.length);
       }, 0);
     },
     [value, onChange]
@@ -188,19 +213,34 @@ export default function Editor({
 
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
-      const selectedText = value.substring(start, end);
-      const template = createLayoutComponentTemplate(id, selectedText);
-      const result = insertBlockTemplate(value, start, end, template);
+      const result = createLayoutComponentEdit(value, start, end, id);
 
       onChange(result.value);
 
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(result.selectionEnd, result.selectionEnd);
-    }, 0);
-  },
+      setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(result.selectionEnd, result.selectionEnd);
+        setCursorPosition(result.selectionEnd);
+      }, 0);
+    },
     [value, onChange]
   );
+
+  const handleClearComponent = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const result = unwrapLayoutComponentBlock(value, textarea.selectionStart);
+    if (!result) return;
+
+    onChange(result.value);
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(result.selectionStart, result.selectionEnd);
+      setCursorPosition(result.selectionStart);
+    }, 0);
+  }, [value, onChange]);
 
   // 快捷键处理
   const handleKeyDown = useCallback(
@@ -268,6 +308,8 @@ export default function Editor({
         onInsert={handleInsert}
         onWrap={handleWrap}
         onInsertComponent={handleInsertComponent}
+        onClearComponent={handleClearComponent}
+        activeComponent={activeComponent}
       />
       <textarea
         ref={textareaRef}
@@ -276,6 +318,10 @@ export default function Editor({
         onPaste={handlePaste}
         onScroll={handleScroll}
         onKeyDown={handleKeyDown}
+        onClick={updateCursorPosition}
+        onFocus={updateCursorPosition}
+        onKeyUp={updateCursorPosition}
+        onSelect={updateCursorPosition}
         className="flex-1 w-full p-4 bg-transparent text-purple-900 font-mono text-base leading-relaxed resize-none focus:outline-none placeholder:text-purple-300"
         placeholder="在此输入 Markdown 内容，或直接从飞书粘贴..."
         spellCheck={false}

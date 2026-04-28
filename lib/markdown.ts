@@ -631,7 +631,7 @@ function renderLayoutComponentBlocks(
         const lineStyle = `display: inline-block; width: 42px; height: 1px; margin: 0 10px 5px; background: ${mediumColor};`;
         const textStyle = `margin: 0; font-size: inherit; line-height: 1.85; font-weight: 600;`;
 
-        return `<section data-layout-component="quote-oval" style="${style}"><p style="${markStyle}">“ <span style="${lineStyle}"></span>•<span style="${lineStyle}"></span></p><p style="${textStyle}">${quoteHtml}</p><p style="${markStyle}"><span style="${lineStyle}"></span>•<span style="${lineStyle}"></span> ”</p></section>`;
+        return `<section data-layout-component="quote-oval" style="${style}"><p style="${markStyle}"><span style="${lineStyle}"></span>•<span style="${lineStyle}"></span></p><p style="${textStyle}">${quoteHtml}</p><p style="${markStyle}"><span style="${lineStyle}"></span>•<span style="${lineStyle}"></span></p></section>`;
       }
 
       if (type === "quote-star") {

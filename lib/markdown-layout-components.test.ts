@@ -57,6 +57,8 @@ describe("layout component Markdown blocks", () => {
     expect(cardHtml).not.toContain("font-size: 17px");
     expect(bubbleHtml).toContain("transform: rotate(45deg)");
     expect(ovalHtml).toContain("border-radius: 999px");
+    expect(ovalHtml).not.toContain("“");
+    expect(ovalHtml).not.toContain("”");
     expect(starHtml).toContain("✦");
     expect(lineHtml).toContain("♥");
     expect(frameHtml).toContain("border-radius: 22px");

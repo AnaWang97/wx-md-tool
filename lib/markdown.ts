@@ -557,6 +557,97 @@ function normalizeSplitFeishuImageLinks(markdown: string): string {
   });
 }
 
+function isPipeTableRow(line: string): boolean {
+  const trimmed = line.trim();
+  if (!trimmed.startsWith("|") || !trimmed.endsWith("|")) return false;
+
+  return trimmed.split("|").length >= 4;
+}
+
+function isPipeTableSeparatorRow(line: string): boolean {
+  const cells = line
+    .trim()
+    .split("|")
+    .slice(1, -1)
+    .map((cell) => cell.trim());
+
+  return (
+    cells.length > 0 &&
+    cells.every((cell) => /^:?-{3,}:?$/.test(cell))
+  );
+}
+
+function getPipeTableColumnCount(line: string): number {
+  return Math.max(0, line.trim().split("|").length - 2);
+}
+
+function createPipeTableSeparator(columnCount: number): string {
+  return `|${Array.from({ length: columnCount }, () => " --- ").join("|")}|`;
+}
+
+function normalizePipeTables(markdown: string): string {
+  const lines = markdown.split("\n");
+  const result: string[] = [];
+  let index = 0;
+  let inFence = false;
+  let fenceMarker: "`" | "~" | null = null;
+  let fenceLength = 0;
+
+  while (index < lines.length) {
+    const line = lines[index];
+    const fenceMatch = line.match(/^[ \t]{0,3}(`{3,}|~{3,})/);
+
+    if (fenceMatch) {
+      const marker = fenceMatch[1][0] as "`" | "~";
+
+      if (!inFence) {
+        inFence = true;
+        fenceMarker = marker;
+        fenceLength = fenceMatch[1].length;
+      } else if (
+        marker === fenceMarker &&
+        fenceMatch[1].length >= fenceLength
+      ) {
+        inFence = false;
+        fenceMarker = null;
+        fenceLength = 0;
+      }
+
+      result.push(line);
+      index++;
+      continue;
+    }
+
+    if (!inFence && isPipeTableRow(line)) {
+      const tableLines: string[] = [];
+
+      while (index < lines.length && isPipeTableRow(lines[index])) {
+        tableLines.push(lines[index]);
+        index++;
+      }
+
+      if (
+        tableLines.length >= 2 &&
+        !isPipeTableSeparatorRow(tableLines[1])
+      ) {
+        tableLines.splice(
+          1,
+          0,
+          createPipeTableSeparator(getPipeTableColumnCount(tableLines[0]))
+        );
+      }
+
+      result.push(...tableLines);
+      continue;
+    }
+
+    result.push(line);
+    index++;
+  }
+
+  return result.join("\n");
+}
+
 function preprocessMarkdown(markdown: string): string {
   let result = markdown;
 
@@ -567,6 +658,8 @@ function preprocessMarkdown(markdown: string): string {
   result = result.replace(/[\u200B-\u200D\uFEFF]/g, '');
 
   result = normalizeSplitFeishuImageLinks(result);
+
+  result = normalizePipeTables(result);
 
   result = normalizeHorizontalRuleSpacing(result);
 

@@ -71,6 +71,21 @@ describe("parseMarkdown", () => {
     expect(html).not.toContain("![图片1]");
   });
 
+  it("normalizes Feishu-style pipe tables without a separator row", () => {
+    const html = parseMarkdown(
+      "|维度 | 即梦Seedance 2.0 | Runway | 可灵 | Pika |\n|访问方式 | ✅ 国内直连 | ❌ 需翻墙 | ✅ 国内直连 | ❌ 需翻墙 |\n|中文理解 | ☆☆☆☆☆ 原生优化 | ☆☆ 需英文 | ☆☆☆☆ 较好 | ☆☆☆ 一般 |",
+      themes[0]
+    );
+
+    expect(html).toContain("<table");
+    expect(html).toContain("<thead");
+    expect(html).toContain("<tbody");
+    expect(html).toContain("<th");
+    expect(html).toContain("即梦Seedance 2.0");
+    expect(html).toContain("访问方式");
+    expect(html).not.toContain("|维度");
+  });
+
   it("renders theme-following divider blocks with the active primary color", () => {
     const html = parseMarkdown(":::divider-heart-dot\n:::", themes[0], {
       primaryColor: "#ec4899",

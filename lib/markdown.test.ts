@@ -36,6 +36,17 @@ describe("parseMarkdown", () => {
     expect(html).not.toContain("<li");
   });
 
+  it("does not turn decimal version names followed by Chinese commas into ordered lists", () => {
+    const html = parseMarkdown(
+      "即梦Seedance 2.0、Sora、Runway……这些名字对普通用户来说都差不多。",
+      themes[0]
+    );
+
+    expect(html).toContain("即梦Seedance 2.0、Sora、Runway");
+    expect(html).not.toContain('data-list="ordered"');
+    expect(html).not.toContain(">1. </span>");
+  });
+
   it("keeps the default horizontal rule unchanged", () => {
     const html = parseMarkdown("---", themes[0]);
 

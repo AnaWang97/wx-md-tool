@@ -683,8 +683,8 @@ function preprocessMarkdown(markdown: string): string {
   // 5. 处理冒号后紧跟有序列表项的情况：`：1. 内容` 或 `：1、内容`
   result = result.replace(/([：:])[ \t]*(\d+)[.、．][ \t]*/g, '$1\n\n$2. ');
 
-  // 6. 处理标点后紧跟有序列表项
-  result = result.replace(/([；;。.])[ \t]*(\d+)[.、．][ \t]*/g, '$1\n\n$2. ');
+  // 6. 处理标点后紧跟有序列表项。避免把 `2.0、Sora` 这类版本号误判成 `0.` 列表。
+  result = result.replace(/([；;。]|(?<!\d)\.)[ \t]*(\d+)[.、．][ \t]*/g, '$1\n\n$2. ');
 
   // 7. 确保有序列表前有空行（非行首的数字列表）
   result = result.replace(/([^\n])(\n)(\d+)[.、．][ \t]+/g, '$1\n\n$3. ');

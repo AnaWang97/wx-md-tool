@@ -8,7 +8,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
   const features = [
     {
       icon: "🎨",
-      title: "18+ 精美主题",
+      title: "27+ 精美主题",
       desc: "经典、现代、创意、极简、暗色等多种风格",
     },
     {
